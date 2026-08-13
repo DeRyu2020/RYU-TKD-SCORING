@@ -1,0 +1,4163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPNP PSS - Taekwondo Scoreboard System V5.3 (Woose Girok)</title>
+  <!-- PeerJS Library untuk Koneksi WebRTC ke HP Remote Juri -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+    background-color: #111;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+    position:relative;
+}
+
+   /* ================= TOP BAR ================= */
+
+.top-bar{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    width:100%;
+    height:58px;
+
+    padding:0 15px;
+
+    background:#1b1b1b;
+
+    box-sizing:border-box;
+}
+
+.top-left{
+
+    display:flex;
+    align-items:center;
+    gap:20px;
+
+    flex:1;
+
+    -webkit-app-region:drag;
+}
+
+.top-right{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    margin-left:auto;
+
+    -webkit-app-region:no-drag;
+}
+
+.app-title{
+
+    font-size:18px;
+    font-weight:700;
+    color:#8c8c8c;
+
+    white-space:nowrap;
+}
+
+    /* Indikator Sinyal Juri Remote (HP) */
+    .judges-status-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .judge-badge {
+      background: #222;
+      border: 1px solid #444;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .judge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff3333;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .judge-dot.active {
+      background: #00ff66;
+      box-shadow: 0 0 8px #00ff66;
+    }
+
+    .btn-setting {
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+/* Wrapper grup tombol kanan */
+.double-arrow-group {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* Kolom tombol vertikal */
+.arrow-column {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Tombol khusus D.Gam-jeom (+2 / -2) */
+.btn-dg {
+  background: #8e44ad;
+  color: #ffffff;
+  border: 1px solid #a569bd;
+  border-radius: 3px;
+  width: 28px;
+  height: 22px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-dg:hover {
+  background: #9b59b6;
+  filter: brightness(1.2);
+}
+
+.btn-dg:active {
+  transform: scale(0.95);
+}
+
+.top-buttons{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.btn-window{
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:8px;
+    background:#2f2f2f;
+    color:#fff;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:all .2s ease;
+}
+
+.btn-window:hover{
+    background:#4b4b4b;
+}
+
+.btn-close:hover{
+    background:#d32f2f;
+}
+
+    .btn-setting:hover { background: #444; }
+
+    /* Header Info Match */
+  .header-info { 
+    display:flex; 
+    justify-content:
+    space-between; 
+    width:100%; 
+    font-size:22px; 
+    font-weight:bold; 
+    background:#111; 
+    padding:18px 30px; 
+    border-radius:10px; 
+    border:1px solid #444; 
+    position:relative;
+    height:62px;
+   }
+    .header-info div span { color:#f39c12; }
+
+    /* Main Scoreboard Board Grid Layout (3 Kolom Utama) */
+    .scoreboard {
+     display:grid;
+    grid-template-columns:
+        minmax(300px,1fr)
+        minmax(180px,14vw)
+        minmax(300px,1fr);
+    gap:8px;
+    width:100%;
+    max-width:none;
+    flex:1;
+    margin:8px 0;
+    min-height:0;
+    overflow:hidden;
+}
+
+    /* Container Seksi Utama Fighter (Chung & Hong) */
+    .fighter-section {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-width: 0;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    /* Tema Biru Tua (Chung) */
+    .chung-section {
+      background: #003366;
+      border: 2px solid #0033aa;
+    }
+
+    /* Tema Merah Tua (Hong) */
+    .hong-section {
+      background: #660000;
+      border: 2px solid #aa0000;
+    }
+
+    /* Header Nama Atlet - Terintegrasi Mulus Tanpa Garis Pemisah */
+    .fighter-header-box {
+      text-align: center;
+      padding: 10px 10px 6px 10px;
+      overflow: hidden;
+    }
+
+    .chung-header {
+      background: #003366;
+    }
+
+    .hong-header {
+      background: #660000;
+    }
+
+    /* Teks Nama Fighter Dibuat Putih (#ffffff) */
+    .fighter-name {
+      font-size: clamp(34px, 2.8vw, 40px);
+      font-weight: bold;
+      line-height: 1;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #ffffff !important;
+    }
+
+    .fighter-club {
+      font-size: clamp(21px,1.9vw,32px);
+      font-weight: 600;
+      color: #bbb;
+      font-weight: normal;
+      text-tran19:04 31/07/2026sform: uppercase;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Container Baris Bawah (Riwayat + Cards) */
+    .fighter-body-row {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      align-items: stretch;
+      width: 100%;
+      min-height: 0;
+    }
+
+    /* Panel Riwayat Samping (Multi-Riwayat) */
+    .side-score-history {
+      padding: 6px;
+      width: 130px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+      max-height: 470px;
+      height: 100%;
+      align-items: center;
+    }
+
+    .chung-history {
+      background: #003366;
+    }
+
+    .hong-history {
+      background: #660000;
+    }
+
+    .side-history-title {
+      font-size: 10px;
+      color: #aaa;
+      text-align: center;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+      font-weight: bold;
+      width: 100%;
+    }
+
+    /* Header Kolom Juri (Indikator Bentuk KOTAK 3 Buah) */
+    .history-header-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      text-align: center;
+      margin-bottom: 4px;
+      border-bottom: 1px dashed rgba(255,255,255,0.15);
+      padding-bottom: 4px;
+      justify-items: center;
+      align-items: center;
+    }
+
+    /* Indikator Kotak Header Juri (J1, J2, J3) */
+    .judge-box-hdr {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 10px;
+      position: relative;
+      transition: all 0.25s ease;
+      opacity: 0.6;
+      filter: grayscale(25%);
+      border: 1px solid rgba(255,255,255,0.3);
+      user-select: none;
+      background: #222;
+      color: #ccc;
+    }
+
+    /* Efek Menyala (Glow) Otomatis Berdasarkan Tombol Juri yang Ditekan */
+    .judge-box-hdr.glow-yellow {
+      background: #f1c40f !important;
+      color: #000 !important;
+      opacity: 1;
+      filter: none;
+      transform: scale(1.15);
+      box-shadow: 0 0 12px #f1c40f;
+      border-color: #fff;
+    }
+    .judge-box-hdr.glow-blue {
+      background: #00cc33 !important;
+      color: #fff !important;
+      opacity: 1;
+      filter: none;
+      transform: scale(1.15);
+      box-shadow: 0 0 12px #0066ff;
+      border-color: #fff;
+    }
+    .judge-box-hdr.glow-red {
+      background: #ff3333 !important;
+      color: #fff !important;
+      opacity: 1;
+      filter: none;
+      transform: scale(1.15);
+      box-shadow: 0 0 12px #ff3333;
+      border-color: #fff;
+    }
+    .judge-box-hdr.glow-purple {
+      background: #9933ff !important;
+      color: #fff !important;
+      opacity: 1;
+      filter: none;
+      transform: scale(1.15);
+      box-shadow: 0 0 12px #9933ff;
+      border-color: #fff;
+    }
+    .judge-box-hdr.glow-orange {
+      background: #ff9900 !important;
+      color: #fff !important;
+      opacity: 1;
+      filter: none;
+      transform: scale(1.15);
+      box-shadow: 0 0 12px #ff9900;
+      border-color: #fff;
+    }
+
+   .judge-box-hdr.glow-darkgreen {
+    background: #006b2e !important;
+    color: #fff !important;
+    opacity: 1;
+    filter: none;
+    transform: scale(1.15);
+    box-shadow: 0 0 12px #006b2e;
+    border-color: #fff;
+    }
+
+    .history-grid-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 3px;
+      align-content: start;
+      overflow-y: auto;
+      max-height: 380px;
+    }
+
+    .history-row-item {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+      gap: 2px;
+      align-items: center;
+      justify-items: center;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 4px;
+      padding: 2px 0;
+    }
+
+    .history-judge-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* Style Bola Billiard Riwayat */
+    .billiard-ball {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-family: 'Bebas Neue', sans-serif;
+      color: #000;
+      box-shadow: inset -1px -1px 4px rgba(0,0,0,0.7), 1px 1px 3px rgba(0,0,0,0.5);
+      position: relative;
+      cursor: default;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.2);
+      margin: 0 auto;
+    }
+
+    .ball-val-1 { background: radial-gradient(circle at 35% 35%, #ffee00 0%, #cc9900 100%); }
+    .ball-val-2 { background: radial-gradient(circle at 30% 30%, #55ff77, #00cc33);color: #111111; }
+    .ball-val-3 { background: radial-gradient(circle at 35% 35%, #ff3333 0%, #880000 100%); color: #fff; }
+    .ball-val-4 { background: radial-gradient(circle at 35% 35%, #9933ff 0%, #330066 100%); color: #fff; }
+    .ball-val-5 { background: radial-gradient(circle at 35% 35%, #ff9900 0%, #884400 100%); color: #fff; }
+    /* BOLA 6 - HIJAU TUA */
+    .ball-val-6 {
+    background: radial-gradient(
+        circle at 35% 35%,
+        #198754 0%,
+        #0b3d20 100%
+    );
+    color: #fff;
+}
+
+    .ball-number {
+     font-size: 18px;
+     line-height: 1;
+}
+
+    .history-box-full-row {
+      width: 95%;
+      background: #252525;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 3px 2px;
+      text-align: center;
+      font-size: 8px;
+      font-weight: bold;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      margin: 0 auto;
+    }
+    .history-box-full-row.gamjeom-box { background: #331111; border-color: #882222; color: #ffcc00; }
+    .history-box-full-row.minus-box { background: #2b1a1a; border-color: #a93226; color: #e74c3c; }
+    .history-box-full-row.tech-box { background: #1b263b; border-color: #1d4ed8; color: #60a5fa; }
+
+    /* Fighter Cards */
+    .fighter-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 15px;
+      position: relative;
+      min-height: 470px; 
+      flex: 1;
+      width: 100%;
+    }
+
+   .chung {
+  background: #0066ff;
+  box-shadow: 0 0 15px rgba(0, 102, 255, 0.8);
+}
+
+.hong {
+  background: #ff003c;
+  box-shadow: 0 0 15px rgba(255, 0, 60, 0.8);
+}
+
+    /* Indikator Kemenangan Ronde */
+    .round-wins-container {
+      position: absolute;
+      top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chung .round-wins-container { right: 15px; }
+    .hong .round-wins-container { left: 15px; }
+
+     .win-dot { 
+  width: 32px; 
+  height: 32px; 
+  border-radius: 50%; 
+  background: transparent;       /* Menyatu dengan background card */
+  border: 2px solid transparent; /* Garis pinggir disembunyikan */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 12px; 
+  font-weight: bold; 
+  color: transparent;            /* Teks/angka disembunyikan saat belum aktif */
+  transition: all 0.3s ease;     /* Efek transisi halus saat titik menyala */
+}
+
+.win-dot.active { 
+  background: #f1c40f; 
+  border-color: #fff; 
+  color: #000; 
+  box-shadow: 0 0 12px #f39c12; 
+  transform: scale(1.1); 
+}
+
+.mini-scores-container {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  position: absolute;
+  top: 15px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+/* Border putih & background transparan untuk setiap baris skor/span */
+.mini-scores-container span,
+.mini-score {
+  border: none; /* Border putih semi-transparan */
+  background: transparent;      /* Latar belakang tipis agar tulisan jelas */
+  padding: 0;
+  border-radius: 0;
+  color: #ffffff;
+  box-shadow: none;
+  font-weight: 700;
+}
+
+/* Card Biru (Chung) - Rata Kiri */
+.chung .mini-scores-container {
+  left: 15px;
+  right: auto;
+  align-items: flex-start;
+}
+
+/* Card Merah (Hong) - Rata Kanan */
+.hong .mini-scores-container {
+  right: 15px;
+  left: auto;
+  align-items: flex-end;
+}
+
+/* Item per baris ronde */
+.mini-score-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Ukuran & Perataan Label R1, R2, R3 */
+.round-label {
+  width: 32px;
+  font-weight: 800;
+  color: #f1c40f; /* Warna kuning emas agar kontras */
+  flex-shrink: 0;
+}
+
+.chung .round-label {
+  text-align: left;
+}
+
+.hong .round-label {
+  text-align: right;
+}
+
+/* Perataan Angka Skor */
+.round-value {
+  min-width: 45px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums; /* Lebar digit angka seragam */
+}
+
+.chung .round-value {
+  text-align: left;
+}
+
+.hong .round-value {
+  text-align: right;
+}
+
+
+    /* Score Display */
+    .score-display {
+      font-size: clamp(300px, 15vw, 400px);
+      font-weight: 900;
+      line-height: 0.95;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      width: 100%;
+      margin: 15px 0;
+      text-align: center;
+      text-shadow: 4px 4px 10px rgba(0,0,0,0.9);
+      color: #fff;
+      transition: color 0.2s ease;
+    }
+
+    .score-display.color-yellow {
+      color: #f1c40f !important;
+      text-shadow: 0 0 20px rgba(241, 196, 15, 0.8), 4px 4px 10px rgba(0,0,0,0.9);
+    }
+
+    .score-display.color-white {
+      color: #fff !important;
+    }
+
+    /* Gam-Jeom Container */
+    .gamjeom-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px 18px;
+      border-radius: 8px;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .gamjeom-label { font-size: 20px; color: #aaa; }
+    .gamjeom-score { font-size: 36px; font-weight: bold; color: #f1c40f; }
+
+
+    /* Center Timer Panel */
+    .center-panel{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#222;
+
+    border-radius:12px;
+
+    border:1px solid #444;
+
+    padding:8px;
+
+    gap:2px;
+
+}
+
+ .center-match-no {
+  font-size: 50px;
+  font-weight: bold;
+  font-family: 'Arial Black', Gadget, sans-serif;
+  color: #f39c12;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  text-align: center;
+}
+
+.match-group {
+  margin-bottom: 40px; /* Ubah angka ini (misal: 15px, 25px, 40px) untuk mengatur jarak ke bagian ROUND */
+}
+
+.match-label {
+  font-size: 30px; /* Sesuaikan ukuran besar kecilnya teks MATCH di sini */
+  font-weight: bold;  
+  font-family: 'Arial Black', Gadget, sans-serif;
+  letter-spacing: 2px;
+  color: #ffffff; /* Atur warna teks jika ingin lebih terang */
+  margin-bottom: 4px; /* Memberi sedikit jarak ke kotak nomor match */
+}
+
+    .round-title { font-size: 30px; font-weight: bold; color: #fff; text-transform: uppercase; }
+    .round-number { font-size: 80px; font-weight: bold; color: #fff; margin-bottom: 5px; }
+    
+.top-center {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      height: 100%;
+    }
+   
+ .timer-status { 
+      font-size: 26px; 
+      font-weight: 900; 
+      letter-spacing: 3px; 
+      color: #888; 
+      margin-bottom: 6px; 
+      text-transform: uppercase;
+      text-align: center; 
+      line-height: 1;
+    }
+
+   .timer-display {
+      font-size: 90px !important; /* Silakan ubah angka ini sesuai selera (misal 75px - 90px) */
+      font-family: 'Bebas Neue', sans-serif;
+      font-weight: bold;
+      color: #00ff66;
+      background: #000;
+      padding: 2px 14px;
+      border-radius: 8px;
+      border: 2px solid #333;
+      line-height: 1;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .timer-display.rest-mode { color: #f1c40f; border-color: #f39c12; }
+    .timer-display.keshi-mode { color: #ff3333; border-color: #ff3333; }
+    .timer-display.pause-highlight {
+      background-color: #332b00 !important;
+      border-color: #f1c40f !important;
+      box-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
+      color: #f1c40f !important;
+    }
+
+    .timer-reason-box {
+      margin-top: 10px;
+      background: #f1c40f;
+      color: #000;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+      display: none;
+      letter-spacing: 1px;
+      width: 100%;
+    }
+
+    /* Control Panel Utama */
+    .controls {
+    display:grid;
+    grid-template-columns:1fr 180px 1fr;
+
+    gap:8px;
+
+    width:100%;
+    max-width:none;
+
+    background:#181818;
+
+    padding:8px 10px;
+
+    border-radius:10px;
+
+    border:1px solid #333;
+
+    flex-shrink:0;
+}
+
+    .score-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .score-card-control {
+      background: #252525;
+      border: 1px solid #383838;
+      border-radius: 6px;
+      padding: 3px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .score-info { display: flex; align-items: center; gap: 4px; }
+    .score-icon { width: 18px; height: 18px; fill: #fff; }
+    .score-meta { display: flex; flex-direction: column; }
+
+    .score-title {
+      font-size: 9px;
+      font-weight: bold;
+      color: #aaa;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .score-val { font-size: 12px; font-weight: 800; color: #00ff66; }
+    .arrow-btn-group { display: flex; flex-direction: column; gap: 2px; }
+
+    .btn-arrow {
+      background: #333;
+      color: #fff;
+      border: none;
+      width: 22px;
+      height: 15px;
+      border-radius: 3px;
+      font-size: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, opacity 0.2s;
+    }
+
+    .btn-arrow:hover:not(:disabled) { opacity: 0.9; }
+    .btn-arrow-up { background: #27ae60; }
+    .btn-arrow-down { background: #c0392b; }
+    .btn-arrow:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .system-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .btn-yes:focus, #btnConfirmYes:focus, #gp-btn-yes:focus {
+    outline: 2px solid #f1c40f !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 8px rgba(241, 196, 15, 0.8) !important;
+   }
+
+   .btn-next:focus, #btnNextMatch:focus, .review-modal-content button:focus {
+    outline: 2px solid #f1c40f !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 8px rgba(241, 196, 15, 0.8) !important;
+  }
+
+    .system-controls button {
+      padding: 6px 10px;
+      height: 25px;
+      font-size: 11px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-timer { background-color: #f39c12; color: white; }
+    .btn-keshi { background-color: #2980b9; color: white; }
+    .btn-keshi:hover { background-color: #3498db; }
+    .btn-system { background-color: #444; color: white; }
+
+    .manual-win-group { display: flex; gap: 6px; margin-top: 2px; }
+
+    .btn-manual-win {
+      flex: 1;
+      padding: 6px 4px !important;
+      font-size: 10px !important;
+      font-weight: 900 !important;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    }
+
+    .btn-manual-chung { background: linear-gradient(135deg, #0055ff, #002288) !important; color: white; border: 1px solid #3385ff !important; }
+    .btn-manual-chung:hover { background: linear-gradient(135deg, #0066ff, #0033aa) !important; }
+
+    .btn-manual-hong { background: linear-gradient(135deg, #ff2222, #880000) !important; color: white; border: 1px solid #ff5555 !important; }
+    .btn-manual-hong:hover { background: linear-gradient(135deg, #ff3333, #aa0000) !important; }
+
+    /* Modals Overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .winner-modal-content {
+      background: #111;
+      border: 4px solid #f39c12;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 520px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(243, 156, 18, 0.4);
+      animation: popIn 0.3s ease-out;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .winner-modal-content.winner-chung {
+      border-color: #0066ff !important;
+      box-shadow: 0 0 50px rgba(0, 102, 255, 0.6) !important;
+      background: linear-gradient(180deg, #001a4d 0%, #0d0d0d 100%) !important;
+    }
+
+    .winner-modal-content.winner-hong {
+      border-color: #ff3333 !important;
+      box-shadow: 0 0 50px rgba(255, 51, 51, 0.6) !important;
+      background: linear-gradient(180deg, #4d0000 0%, #0d0d0d 100%) !important;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .winner-badge { font-size: 14px; font-weight: bold; color: #f39c12; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+    
+    .winner-title { 
+      font-size: 32px; 
+      font-weight: 900; 
+      color: #fff; 
+      margin-bottom: 10px; 
+      text-transform: uppercase;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .winner-title.text-chung { color: #3385ff; text-shadow: 0 0 15px rgba(0,102,255,0.8); }
+    .winner-title.text-hong { color: #ff5555; text-shadow: 0 0 15px rgba(255,51,51,0.8); }
+
+    .winner-question { font-size: 16px; font-weight: bold; color: #fff; margin: 15px 0 10px; }
+    
+    .wt-select-box {
+      width: 100%;
+      background: #181818;
+      color: #00ff66;
+      border: 2px solid #444;
+      padding: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .wt-select-box:focus { border-color: #f39c12; }
+
+    .winner-actions { display: flex; justify-content: center; gap: 15px; }
+
+    .btn-yes { background: #2ecc71; color: #fff; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; min-width: 120px; border:none; cursor:pointer;}
+    .btn-no { background: #e74c3c; color: #fff; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; min-width: 120px; border:none; cursor:pointer;}
+
+    .btn-yes.btn-chung-theme { background: #0066ff !important; }
+    .btn-yes.btn-hong-theme { background: #ff3333 !important; }
+
+    /* Modal Form Settings */
+    .settings-wrapper {
+      display: flex;
+      gap: 15px;
+      width: 95%;
+      max-width: 1100px;
+      max-height: 90vh;
+      transition: all 0.3s ease;
+    }
+
+    .modal-content {
+      background: #222;
+      border: 1px solid #444;
+      border-radius: 12px;
+      flex: 1;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .settings-grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .side-panel-match {
+      display: none;
+      width: 420px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 12px;
+      padding: 20px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      animation: slideRight 0.3s forwards;
+    }
+
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #444; padding-bottom: 12px; margin-bottom: 15px; }
+    .modal-header h2 { font-size: 18px; color: #f39c12; }
+    .close-btn { background: transparent; border: none; color: #aaa; font-size: 24px; cursor: pointer; }
+    .close-btn:hover { color: #fff; }
+
+    .setting-section { margin-bottom: 15px; background: #161616; padding: 12px; border-radius: 8px; border: 1px solid #333; height: 100%; }
+    .setting-section h3 { font-size: 14px; color: #00ff66; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; display:flex; justify-content:space-between; align-items:center;}
+
+    .form-grid-single { display: flex; flex-direction: column; gap: 8px; }
+    .form-group { display: flex; flex-direction: column; gap: 3px; }
+    .form-group label { font-size: 11px; color: #ccc; }
+    .form-group input { background: #111; border: 1px solid #444; color: #fff; padding: 6px 8px; border-radius: 5px; font-size: 12px; }
+    .form-group input:focus { outline: none; border-color: #f39c12; }
+
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; border-top: 1px solid #444; padding-top: 12px; }
+    .btn-save { background: #00b894; color: white; padding: 8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight: bold; font-size:12px;}
+    .btn-cancel { background: #6c5ce7; color: white; padding: 8px 16px; border:none; border-radius:6px; cursor:pointer; font-size:12px;}
+    .btn-toggle-side { background: #e67e22; color: white; padding: 5px 10px; border:none; border-radius:5px; cursor:pointer; font-size: 11px; font-weight: bold; }
+
+    .match-table-container {
+      margin-top: 6px;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+
+    .match-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    .match-table th {
+      background: #252525;
+      color: #f39c12;
+      padding: 6px;
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid #444;
+    }
+
+    .match-table td {
+      padding: 6px;
+      border-bottom: 1px solid #333;
+      cursor: pointer;
+    }
+
+    .match-table tr:hover { background: #2a2a2a; }
+
+    .badge-chung { color: #3385ff; font-weight: bold; }
+    .badge-hong { color: #ff5555; font-weight: bold; }
+
+    /* FULL SCREEN WINNER DISPLAY */
+    .fullscreen-winner-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 99999;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .fullscreen-winner-overlay.bg-chung {
+      background: linear-gradient(135deg, #001133 0%, #0044cc 50%, #001133 100%);
+      border: 15px solid #0066ff;
+    }
+
+    .fullscreen-winner-overlay.bg-hong {
+      background: linear-gradient(135deg, #330000 0%, #cc0000 50%, #330000 100%);
+      border: 15px solid #ff3333;
+    }
+
+    .fs-match-no {
+      font-size: 38px;
+      font-weight: 800;
+      color: #f1c40f;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    }
+
+    .fs-winner-badge {
+      font-size: 28px;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 25px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px 30px;
+      border-radius: 50px;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .fs-winner-card {
+      background: rgba(0, 0, 0, 0.75);
+      border: 4px solid #fff;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 900px;
+      padding: 40px 20px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .fs-winner-name {
+      font-size: 64px;
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 12px rgba(0,0,0,0.9);
+      line-height: 1.1;
+    }
+
+    .fs-winner-club {
+      font-size: 32px;
+      color: #ffd700;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .fs-winner-reason {
+      font-size: 22px;
+      font-weight: bold;
+      color: #00ff66;
+      margin-top: 10px;
+      letter-spacing: 1px;
+    }
+
+    .fs-close-btn {
+      margin-top: 35px;
+      background: #f39c12;
+      color: #000;
+      border: none;
+      padding: 15px 40px;
+      font-size: 20px;
+      font-weight: 900;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      transition: all 0.2s;
+    }
+
+    .fs-close-btn:hover {
+      background: #fff;
+      transform: scale(1.05);
+    }
+
+    .gamjeom-prompt-box {
+      background: #1a1a1a;
+      border: 2px solid #f39c12;
+      border-radius: 10px;
+      padding: 15px 20px;
+      width: 300px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.8);
+      text-align: center;
+      animation: popIn 0.2s ease-out;
+    }
+    .gamjeom-prompt-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #f1c40f;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .tpoint-action-wrapper {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 4px;
+      align-items: center;
+    }
+    .btn-round-win-action {
+      background: #222;
+      border: 1px solid #444;
+      color: #f1c40f;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 4px 2px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: uppercase;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .btn-round-win-action:hover {
+      background: #444;
+    }
+             /* Hapus body.reverse-mode { transform: rotate(180deg); } */
+
+/* Ganti dengan CSS Swap Flexbox */
+.scoreboard.swapped .chung-section { order: 3; }
+.scoreboard.swapped .hong-section  { order: 1; }
+
+/* Menjaga posisi History tetap di ujung luar layar */
+.scoreboard.swapped .chung-section .fighter-body-row,
+.scoreboard.swapped .hong-section .fighter-body-row {
+  flex-direction: row-reverse;
+}
+
+
+.ryu-logo{
+    position:absolute;
+    right:20px;
+    top:50%;
+    transform:translateY(-50%);
+    height:48px;
+    width:auto;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOP BAR ================= -->
+<div class="top-bar">
+
+    <!-- Kiri : Judul + Status Juri -->
+    <div class="top-left">
+
+        <div class="app-title">
+            RYU TKD SCORING
+        </div>
+
+        <!-- Indikator Status Juri -->
+        <div class="judges-status-bar">
+            <div class="judge-badge">
+                <span id="dot-J1" class="judge-dot"></span> JURI 1
+            </div>
+
+            <div class="judge-badge">
+                <span id="dot-J2" class="judge-dot"></span> JURI 2
+            </div>
+
+            <div class="judge-badge">
+                <span id="dot-J3" class="judge-dot"></span> JURI 3
+            </div>
+        </div>
+    </div>
+
+    <!-- Kanan : Tombol -->
+    
+    <div class="top-right">
+        <button class="btn-control" onclick="handleReverseButtonClick()" title="Swap Extend Screen">⇆</button>
+        <button class="btn-setting" onclick="openSettings()">
+            ⚙️ SETTING
+        </button>
+        <button class="btn-window"
+                onclick="window.electron.minimize()"
+                title="Mode Window">
+            &minus;
+        </button>
+        <button class="btn-window"
+                onclick="window.electron.maximize()"
+                title="Fullscreen">
+            ⛶
+        </button>
+        <button class="btn-window btn-close"
+                onclick="window.electron.close()"
+                title="Close">
+            ✕
+        </button>
+    </div>
+</div>
+
+</div class="app-container">
+  <!-- Header Info Match -->
+  <div class="header-info">
+    <div>CATEGORY: <span id="category">SENIOR MALE -58KG</span></div>
+         <img src="assets/logo/logo-dark-hor.png"
+                          class="ryu-logo"
+                          alt="RYU TKD SCORING">  
+</div>
+
+  <!-- Main Scoreboard dengan Panel Terintegrasi Mulus -->
+  <div class="scoreboard">
+    
+    <!-- CHUNG (BLUE) UNIFIED SECTION -->
+    <div class="fighter-section chung-section">
+      <div class="fighter-header-box chung-header">
+        <div class="fighter-name" id="chung-name">CHUNG</div>
+        <div class="fighter-club" id="chung-club"></div>
+      </div>
+      <div class="fighter-body-row">
+        <!-- PANEL RIWAYAT BIRU -->
+        <div class="side-score-history chung-history" id="sideHistoryChung">
+          <div class="side-history-title">Chung History</div>
+          <div class="history-header-row">
+            <div class="judge-box-hdr" id="hdr-box-J1-chung" title="Juri 1">1</div>
+            <div class="judge-box-hdr" id="hdr-box-J2-chung" title="Juri 2">2</div>
+            <div class="judge-box-hdr" id="hdr-box-J3-chung" title="Juri 3">3</div>
+          </div>
+          <div class="history-grid-container" id="gridHistoryChung"></div>
+        </div>
+
+        <!-- CARDS BIRU -->
+        <div class="fighter-card chung">
+          <div class="round-wins-container">
+            <div class="win-dot" id="chung-r1">R1</div>
+            <div class="win-dot" id="chung-r2">R2</div>
+            <div class="win-dot" id="chung-r3">R3</div>
+          </div>
+
+          <div id="chung-mini-scores" class="mini-scores-container"></div>>
+
+          <div class="score-display" id="chung-score">0</div>
+          
+          <div class="gamjeom-container">
+            <span class="gamjeom-label">GAM-JEOM</span>
+            <span class="gamjeom-score" id="chung-gamjeom">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER (TIMER & ROUND) -->
+    <div class="center-panel">
+  
+  <!-- Kelompok MATCH -->
+  <div class="match-group">
+    <div class="match-label">MATCH</div>
+    <div id="match-no" class="center-match-no">007</div>
+  </div>
+
+  <!-- Kelompok ROUND -->
+  <div class="round-group" style="width: 100%; text-align: center;">
+    <div class="round-title">ROUND</div>
+    <div class="round-number" id="round-display">1</div>
+  </div>
+
+  <div class="timer-status" id="timer-status">MATCH TIME</div>
+  <div class="timer-display" id="timer-display">02:00</div>
+  <div class="timer-reason-box" id="timerReasonBox"></div>
+</div>
+
+    <!-- HONG (RED) UNIFIED SECTION -->
+    <div class="fighter-section hong-section">
+      <div class="fighter-header-box hong-header">
+        <div class="fighter-name" id="hong-name">HONG</div>
+        <div class="fighter-club" id="hong-club"></div>
+      </div>
+      <div class="fighter-body-row">
+        <!-- CARDS MERAH -->
+        <div class="fighter-card hong">
+          <div class="round-wins-container">
+            <div class="win-dot" id="hong-r1">R1</div>
+            <div class="win-dot" id="hong-r2">R2</div>
+            <div class="win-dot" id="hong-r3">R3</div>
+          </div>
+
+          <div id="hong-mini-scores" class="mini-scores-container"></div>          
+
+          <div class="score-display" id="hong-score">0</div>
+          
+          <div class="gamjeom-container">
+            <span class="gamjeom-label">GAM-JEOM</span>
+            <span class="gamjeom-score" id="hong-gamjeom">0</span>
+          </div>
+        </div>
+
+        <!-- PANEL RIWAYAT MERAH -->
+        <div class="side-score-history hong-history" id="sideHistoryHong">
+          <div class="side-history-title">Hong History</div>
+          <div class="history-header-row">
+            <div class="judge-box-hdr" id="hdr-box-J1-hong" title="Juri 1">1</div>
+            <div class="judge-box-hdr" id="hdr-box-J2-hong" title="Juri 2">2</div>
+            <div class="judge-box-hdr" id="hdr-box-J3-hong" title="Juri 3">3</div>
+          </div>
+          <div class="history-grid-container" id="gridHistoryHong"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Control Panel Utama -->
+<div class="controls">
+  
+<!-- ================= CONTROLLER CHUNG (BIRU) ================= -->
+<div class="score-buttons-grid">
+  <!-- 1. PUNCH -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M19 10.5V8a2 2 0 0 0-2-2h-3V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H6a2 2 0 0 0-2 2v2.5a3.5 3.5 0 0 0 2.1 3.2L12 17l5.9-3.3a3.5 3.5 0 0 0 2.1-3.2z"/></svg>
+      <div class="score-meta"><span class="score-title">PUNCH</span><span class="score-val">+1</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('chung', 1, 'punch', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('chung', -1, 'punch', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 2. BODY -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg>
+      <div class="score-meta"><span class="score-title">BODY</span><span class="score-val">+2</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('chung', 2, 'body', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('chung', -2, 'body', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 3. HEAD -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" fill="none"/></svg>
+      <div class="score-meta"><span class="score-title">HEAD</span><span class="score-val">+3</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('chung', 3, 'head', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('chung', -3, 'head', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 4. T.BODY -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+      <div class="score-meta"><span class="score-title">T.BODY</span><span class="score-val">+4</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('chung', 4, 'turnBody', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('chung', -4, 'turnBody', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 5. T.HEAD (+6) -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M12 4V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg>
+      <div class="score-meta"><span class="score-title">T.HEAD</span><span class="score-val">+6</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('chung', 6, 'turnHead', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('chung', -6, 'turnHead', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 6. GAMJEOM CHUNG -->
+  <div class="score-card-control" style="background:#1a0033; border-color:#440088;">
+    <div class="score-info">
+      <span style="font-size:16px;">⚠️</span>
+      <div class="score-meta">
+        <span class="score-title" style="color:#c8a2c8;">GAMJEOM</span>
+        <span class="score-val" style="color:#f1c40f;">±1 / ±2</span>
+      </div>
+    </div>
+    <div class="double-arrow-group">
+      <div class="arrow-column">
+        <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="promptGamjeom('chung', 1)" title="+1 Gamjeom">▲</button>
+        <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyGamjeom('chung', -1, 'J1')" title="-1 Gamjeom">▼</button>
+      </div>
+      <div class="arrow-column">
+        <button class="btn-dg" onclick="promptGamjeom('chung', 2)" title="+2 Double Gamjeom">+2</button>
+        <button class="btn-dg" style="background:#5b2c6f;" onclick="modifyGamjeom('chung', -2, 'J1')" title="-2 Double Gamjeom">-2</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. TECHNICAL POINT & WIN ROUND CHUNG -->
+  <div style="grid-column: span 3; display: flex; gap: 6px; align-items: center;" class="tpoint-action-wrapper">
+    <!-- Button Win Round -->
+    <button class="btn-round-win-action" style="flex: 1; height: 38px;" onclick="triggerManualRoundWin('chung')" title="Picu Kemenangan Round Chung">
+      Chung Win Round
+    </button>
+
+    <!-- Control T.Poin +2 -->
+    <div class="score-card-control" style="background:#0b192c; border: 1px solid #1e3a8a; flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; border-radius: 4px;">
+  <span style="color:#60a5fa; font-weight:bold; font-size:11px;">⭐ +2</span>
+  <div class="arrow-btn-group" style="display: flex; flex-direction: column; gap: 2px;">
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-up" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('chung', true)">▲</button>
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-down" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('chung', false)">▼</button>
+  </div>
+</div>
+
+<!-- Control T.Poin +3 -->
+<div class="score-card-control" style="background:#0b192c; border: 1px solid #1e3a8a; flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; border-radius: 4px;">
+  <span style="color:#60a5fa; font-weight:bold; font-size:11px;">⭐ +3</span>
+  <div class="arrow-btn-group" style="display: flex; flex-direction: column; gap: 2px;">
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-up" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('chung', true)">▲</button>
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-down" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('chung', false)">▼</button>
+  </div>
+</div>
+  </div>
+</div> <!-- PENUTUP GRID CHUNG -->
+
+
+<!-- ================= CONTROLLER SYSTEM (TENGAH) ================= -->
+<div class="system-controls">
+  <div style="display:flex; gap:5px;">
+    <button class="btn-timer" style="flex:1;" onclick="startTimer()">▶ Start</button>
+    <button class="btn-timer" style="flex:1; background:#e67e22;" onclick="pauseTimer()">⏸ Pause</button>
+  </div>
+  <div style="display:flex; gap:5px;">
+    <button class="btn-keshi" style="flex:1;" onclick="toggleKeshiTimer()">⏳ Kye-shi</button>
+    <button class="btn-system" style="flex:1; background:#444;" onclick="resetTimer()">🔄 Time</button>
+  </div>
+  <div style="display:flex; gap:5px;">
+    <button class="btn-system" style="flex:1; background:#2980b9;" onclick="nextRound()">⏩ Round</button>
+    <button class="btn-system" style="flex:1; background:#27ae60;" onclick="nextMatch()">⏭ Match</button>
+  </div>
+  
+  <div class="manual-win-group">
+    <button class="btn-system btn-manual-win btn-manual-chung" onclick="openManualWinModal('chung')">🟦 C.WIN</button>
+    <button class="btn-system btn-manual-win btn-manual-hong" onclick="openManualWinModal('hong')">🟥 H.WIN</button>
+  </div>
+</div>
+
+
+<!-- ================= CONTROLLER HONG (MERAH) ================= -->
+<div class="score-buttons-grid">
+  <!-- 1. PUNCH -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M19 10.5V8a2 2 0 0 0-2-2h-3V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H6a2 2 0 0 0-2 2v2.5a3.5 3.5 0 0 0 2.1 3.2L12 17l5.9-3.3a3.5 3.5 0 0 0 2.1-3.2z"/></svg>
+      <div class="score-meta"><span class="score-title">PUNCH</span><span class="score-val">+1</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('hong', 1, 'punch', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('hong', -1, 'punch', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 2. BODY -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm0-4h-2V7h2z"/></svg>
+      <div class="score-meta"><span class="score-title">BODY</span><span class="score-val">+2</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('hong', 2, 'body', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('hong', -2, 'body', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 3. HEAD -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" fill="none"/></svg>
+      <div class="score-meta"><span class="score-title">HEAD</span><span class="score-val">+3</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('hong', 3, 'head', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('hong', -3, 'head', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 4. T.BODY -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg>
+      <div class="score-meta"><span class="score-title">T.BODY</span><span class="score-val">+4</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('hong', 4, 'turnBody', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('hong', -4, 'turnBody', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 5. T.HEAD (+6) -->
+  <div class="score-card-control">
+    <div class="score-info">
+      <svg class="score-icon" viewBox="0 0 24 24"><path d="M12 4V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg>
+      <div class="score-meta"><span class="score-title">T.HEAD</span><span class="score-val">+6</span></div>
+    </div>
+    <div class="arrow-btn-group">
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="modifyScore('hong', 6, 'turnHead', 'J1')">▲</button>
+      <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyScore('hong', -6, 'turnHead', 'J1')">▼</button>
+    </div>
+  </div>
+
+  <!-- 6. GAMJEOM HONG -->
+  <div class="score-card-control" style="background:#2c0b0b; border-color:#8a1e1e;">
+    <div class="score-info">
+      <span style="font-size:16px;">⚠️</span>
+      <div class="score-meta">
+        <span class="score-title" style="color:#fca5a5;">GAMJEOM</span>
+        <span class="score-val" style="color:#f87171;">±1 / ±2</span>
+      </div>
+    </div>
+    <div class="double-arrow-group">
+      <div class="arrow-column">
+        <button class="manual-ctrl-btn btn-arrow btn-arrow-up" onclick="promptGamjeom('hong', 1)" title="+1 Gamjeom">▲</button>
+        <button class="manual-ctrl-btn btn-arrow btn-arrow-down" onclick="modifyGamjeom('hong', -1, 'J1')" title="-1 Gamjeom">▼</button>
+      </div>
+      <div class="arrow-column">
+        <button class="btn-dg" style="background:#c0392b; border-color:#e74c3c;" onclick="promptGamjeom('hong', 2)" title="+2 Double Gamjeom">+2</button>
+        <button class="btn-dg" style="background:#78281f; border-color:#922b21;" onclick="modifyGamjeom('hong', -2, 'J1')" title="-2 Double Gamjeom">-2</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. TECHNICAL POINT & WIN ROUND HONG -->
+  <div style="grid-column: span 3; display: flex; gap: 6px; align-items: center;" class="tpoint-action-wrapper">
+   <!-- Control T.Poin +2 -->
+<div class="score-card-control" style="background:#2c0b0b; border: 1px solid #8a1e1e; flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; border-radius: 4px;">
+  <span style="color:#f87171; font-weight:bold; font-size:11px;">⭐ +2</span>
+  <div class="arrow-btn-group" style="display: flex; flex-direction: column; gap: 2px;">
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-up" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('hong', true)">▲</button>
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-down" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('hong', false)">▼</button>
+  </div>
+</div>
+
+<!-- Control T.Poin +3 -->
+<div class="score-card-control" style="background:#2c0b0b; border: 1px solid #8a1e1e; flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 2px 6px; border-radius: 4px;">
+  <span style="color:#f87171; font-weight:bold; font-size:11px;">⭐ +3</span>
+  <div class="arrow-btn-group" style="display: flex; flex-direction: column; gap: 2px;">
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-up" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('hong', true)">▲</button>
+    <button class="manual-ctrl-btn btn-arrow btn-arrow-down" style="padding: 0 4px; font-size: 9px;" onclick="triggerSmartTechnicalPoint('hong', false)">▼</button>
+  </div>
+</div>
+
+    <!-- Button Win Round -->
+    <button class="btn-round-win-action" style="flex: 1; height: 38px;" onclick="triggerManualRoundWin('hong')" title="Picu Kemenangan Round Hong">
+      Hong Win Round
+    </button>
+  </div>
+</div> <!-- PENUTUP GRID HONG -->
+
+<!-- MODAL DIALOG KONFIRMASI GAM-JEOM (Di luar pembungkus controls) -->
+<div class="modal-overlay" id="gamjeomPromptModal" style="display:none;">
+  <div class="gamjeom-prompt-box">
+    <div class="gamjeom-prompt-title" id="gp-title">⚠️ Tambah Gam-Jeom</div>
+    <div style="font-size: 12px; color: #ccc; margin-bottom: 15px;" id="gp-message">Konfirmasi Gam-Jeom?</div>
+    <div class="winner-actions">
+      <button class="btn-yes" style="padding: 6px 20px; font-size: 13px;" id="gp-btn-yes" onclick="confirmGamjeomPrompt(true)">Yes</button>
+      <button class="btn-no" style="padding: 6px 20px; font-size: 13px;" onclick="confirmGamjeomPrompt(false)">No</button>
+    </div>
+  </div>
+</div>
+
+  <!-- MODAL DIALOG PEMBERITAHUAN TEKNIK IDENTIK & WOOSE GIROK -->
+  <div class="modal-overlay" id="identicalModal" style="align-items: flex-end; padding-bottom: 30px;">
+    <div class="winner-modal-content" style="border-color: #f1c40f; box-shadow: 0 0 30px rgba(241, 196, 15, 0.4); max-width: 650px; padding: 20px;">
+      <button class="close-btn" style="position: absolute; top: 15px; right: 20px;" onclick="closeIdenticalModal()">&times;</button>
+      <div class="winner-title" style="font-size: 20px; color: #fff; margin-bottom: 8px;">WOOSE GIROK</div>
+      
+      <div class="winner-question" id="identicalModalText" style="font-size: 13px; color: #ffd700; margin: 10px 0;">
+        Poin kedua atlet sama di akhir ronde, tetapi komposisi tingkat kesulitan teknik benar-benar persis sama!<br>Silakan putuskan melalui <strong>Woose Girok (Superioritas Juri)</strong>:
+      </div>
+
+      <div class="winner-actions">
+        <button class="btn-yes btn-chung-theme" style="padding: 8px 20px; font-size: 14px;" onclick="resolveIdenticalTie('chung')">🟦 CHUNG MENANG</button>
+        <button class="btn-yes btn-hong-theme" style="padding: 8px 20px; font-size: 14px;" onclick="resolveIdenticalTie('hong')">🟥 HONG MENANG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DIALOG WINNER -->
+  <div class="modal-overlay" id="winnerModal" style="align-items: flex-end; padding-bottom: 30px;">
+    <div class="winner-modal-content" id="winnerModalBox" style="max-width: 650px; padding: 20px;">
+      <div class="winner-badge" id="win-badge-text" style="font-size: 13px; margin-bottom: 5px;">PERINGATAN KEMENANGAN RONDE</div>
+      <div class="winner-title" id="win-fighter-name" style="font-size: 20px; margin-bottom: 8px;">CHUNG</div>
+      
+      <div class="winner-question" id="win-question-text" style="font-size: 13px; margin: 5px 0;">Pilih Alasan Kemenangan (WT Rules):</div>
+      
+      <select class="wt-select-box" id="wtReasonSelect" style="padding: 8px; margin-bottom: 12px; font-size: 12px;">
+        <option value="PTG - Win by Point Gap (Selisih Poin)">PTG - Win by Point Gap (Selisih Poin)</option>
+        <option value="PTF - Win by Final Score (Keunggulan Poin / Prioritas Teknik)">PTF - Win by Final Score (Keunggulan Poin / Prioritas Teknik)</option>
+        <option value="RSC - Win by Referee Stop Contest (Keputusan Wasit)">RSC - Win by Referee Stop Contest (Keputusan Wasit)</option>
+        <option value="GDP - Win by Golden Point (Poin Emas)">GDP - Win by Golden Point (Poin Emas)</option>
+        <option value="DSQ - Win by Disqualification (Diskalifikasi Lawan)">DSQ - Win by Disqualification (Diskalifikasi Lawan)</option>
+        <option value="PUN - Win by Punishment (Batas Maksimal Gam-jeom)">PUN - Win by Punishment (Batas Maksimal Gam-jeom)</option>
+        <option value="WDR - Win by Withdrawal (Lawan Mengundurkan Diri)">WDR - Win by Withdrawal (Lawan Mengundurkan Diri)</option>
+        <option value="SUP - Win by Woose Girok / Superiority (Keputusan Juri)">SUP - Win by Woose Girok / Superiority (Keputusan Juri)</option>
+      </select>
+
+      <div style="font-size: 13px; color: #fff; margin-bottom: 15px; font-weight: bold;" id="win-subtext">Konfirmasi pemenang ronde ini?</div>
+
+      <div class="winner-actions" id="win-actions-box">
+        <button class="btn-yes" id="btn-confirm-yes" onclick="confirmWinner(true)">YES</button>
+        <button class="btn-no" onclick="confirmWinner(false)">NO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPUP FULL SCREEN WINNER -->
+  <div class="fullscreen-winner-overlay" id="fullscreenWinnerOverlay">
+    <div class="fs-match-no" id="fsMatchNo">MATCH NO : 001</div>
+    <div class="fs-winner-badge">WINNER OF THE MATCH</div>
+    
+    <div class="fs-winner-card" id="fsWinnerCard">
+      <div class="fs-winner-name" id="fsWinnerName">CHUNG</div>
+      <div class="fs-winner-club" id="fsWinnerClub"></div>
+      <div class="fs-winner-reason" id="fsWinnerReason">WIN BY RSC</div>
+    </div>
+
+    <button class="fs-close-btn" onclick="closeFullScreenWinner()">Next Match ⏭</button>
+  </div>
+
+  <!-- MODAL SETTINGS & REGISTER PARTAI -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="settings-wrapper">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Pengaturan & Register Partai</h2>
+          <button class="btn-toggle-side" onclick="toggleSidePanel()">📋 Daftar Partai Registered</button>
+          <button class="close-btn" onclick="closeSettings()">&times;</button>
+        </div>
+
+        <div class="settings-grid-container">
+          <!-- Kolom Kiri: Setting Pertandingan & Remote Arena -->
+          <div class="setting-section">
+            <h3>1. Setting Pertandingan & Remote Arena</h3>
+            <div class="form-grid-single">
+              <div class="form-group"><label>ID Remote Arena (WebRTC):</label><input type="text" id="cfg-arena-id" value="ARENA-1"></div>
+              <div class="form-group"><label>Durasi Match (Detik):</label><input type="number" id="cfg-duration" value="120"></div>
+              <div class="form-group"><label>Istirahat Per Round (Detik):</label><input type="number" id="cfg-rest" value="60"></div>
+              <div class="form-group"><label>Jumlah Judge Kasih Poin (1, 2, atau 3):</label><input type="number" id="cfg-judges" value="3"></div>
+              <div class="form-group"><label>Maksimal Gam-Jeom Auto DQ:</label><input type="number" id="cfg-max-gamjeom" value="5"></div>
+              <div class="form-group"><label>Batas Ceiling Point (0 = Off):</label><input type="number" id="cfg-ceiling-point" value="12"></div>
+              <div class="form-group"><label>Batas Gap-Poin (0 = Off):</label><input type="number" id="cfg-gap-point" value="12"></div>
+            </div>
+          </div>
+
+          <!-- Kolom Kanan: Input / Update Aktif Partai -->
+          <div class="setting-section">
+            <h3>2. Input / Update Aktif Partai</h3>
+            <div class="form-grid-single">
+              <div class="form-group"><label>Nomor Partai:</label><input type="text" id="cfg-match-no" value="001"></div>
+              <div class="form-group"><label>Kategori:</label><input type="text" id="cfg-category" value="SENIOR MALE -58KG"></div>
+              <div class="form-group"><label>Nama Chung (Biru):</label><input type="text" id="cfg-chung-name" value="chung"></div>
+              <div class="form-group"><label>Klub Chung:</label><input type="text" id="cfg-chung-club" value=""></div>
+              <div class="form-group"><label>Nama Hong (Merah):</label><input type="text" id="cfg-hong-name" value="hong"></div>
+              <div class="form-group"><label>Klub Hong:</label><input type="text" id="cfg-hong-club" value=""></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-cancel" onclick="registerNewMatch()">Register Partai Ini</button>
+          <button class="btn-save" onclick="saveSettings()">Simpan & Terapkan Ke Display</button>
+        </div>
+      </div>
+
+      <div class="side-panel-match" id="sidePanelMatch">
+        <div class="modal-header">
+          <h2 style="font-size: 15px; color: #00ff66;">📋 Register Semua Partai</h2>
+          <button class="close-btn" onclick="toggleSidePanel()">&times;</button>
+        </div>
+        <p style="font-size: 11px; color: #aaa; margin-bottom: 4px;">💡 Double Click baris untuk memuat partai.</p>
+        <div class="match-table-container">
+          <table class="match-table">
+            <thead>
+              <tr><th>No</th><th>Kategori</th><th>Chung</th><th>Hong</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="matchTableBody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top: 8px;">
+          <button class="btn-system" style="width:100%; background:#c0392b; font-size:10px; padding:6px;" onclick="clearAllRegisteredMatches()">🗑️ Hapus Semua Partai</button>
+        </div>
+
+        <!-- LIST PARTAI TERLEWAT -->
+        <div style="margin-top: 15px; border-top: 1px dashed #444; padding-top: 10px;">
+          <h2 style="font-size: 14px; color: #f39c12; margin-bottom: 4px;">📁 List Partai Terlewat (Selesai)</h2>
+          <p style="font-size: 10px; color: #aaa; margin-bottom: 4px;">💡 Double Click untuk review ronde 1-3 match.</p>
+          <div class="match-table-container">
+            <table class="match-table">
+              <thead>
+                <tr><th>No</th><th>Kategori</th><th>Pemenang</th><th>Aksi</th></tr>
+              </thead>
+              <tbody id="passedMatchTableBody"></tbody>
+            </table>
+          </div>
+          <div style="margin-top: 8px;">
+            <button class="btn-system" style="width:100%; background:#c0392b; font-size:10px; padding:6px;" onclick="clearAllPassedMatches()">🗑️ Hapus Semua Partai Terlewat</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL REVIEW MATCH SELESAI -->
+  <div class="modal-overlay" id="reviewMatchModal">
+    <div class="winner-modal-content" style="max-width: 650px; text-align: left; padding: 25px; border-color: #3498db; background: #151515;">
+      
+      <div style="text-align: center; border-bottom: 2px dashed #444; padding-bottom: 10px; margin-bottom: 15px; position: relative;">
+        <button class="close-btn" style="position: absolute; top: 0; right: 0;" onclick="closeReviewModal()">&times;</button>
+        <div style="font-size: 14px; font-weight: bold; color: #3498db; letter-spacing: 1px;">REVIEW MATCH SELESAI</div>
+        <div style="font-size: 16px; font-weight: bold; color: #fff; margin-top: 4px;" id="rev-match-title">PARTAI 001 - SENIOR MALE</div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; margin-bottom: 12px; padding: 0 10px;">
+        <div style="color: #3385ff; text-align: left; width: 45%;">CHUNG (BIRU)<br><span style="font-size: 13px; color: #fff;" id="rev-chung-name">-</span></div>
+        <div style="color: #ff5555; text-align: right; width: 45%;">HONG (MERAH)<br><span style="font-size: 13px; color: #fff;" id="rev-hong-name">-</span></div>
+      </div>
+
+      <div style="background: #1c1c1c; border: 1px solid #333; border-radius: 8px; padding: 12px; margin-bottom: 15px;" id="rev-rounds-container">
+      </div>
+
+      <div style="font-size: 13px; color: #ccc; background: #111; padding: 12px; border-radius: 6px; border-left: 4px solid #f39c12; margin-bottom: 15px;">
+        <div style="margin-bottom: 6px;"><strong>Alasan Kemenangan Match:</strong> <span id="rev-reason-text" style="color:#00ff66;">-</span></div>
+        <div><strong>Pemenang Resmi Match:</strong> <span id="rev-winner-text" style="color:#f1c40f; font-weight: bold; font-size: 15px;">-</span></div>
+      </div>
+
+      <div class="winner-actions" style="justify-content: flex-end;">
+        <button class="btn-cancel" style="padding: 8px 25px; font-size: 13px; font-weight: bold;" onclick="closeReviewModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+    let scores = { chung: 0, hong: 0 };
+    let gamjeom = { chung: 0, hong: 0 };
+    let isExtendedSwapped = false;
+
+    let historyLogs = { chung: [], hong: [] };
+          
+    
+    let scoreHistory = {
+      chung: [],
+      hong: []
+    };
+    
+    let matchDetail = {
+      chung: { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 },
+      hong:  { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 }
+    };
+
+    let roundWins = {
+      chung: { 1: false, 2: false, 3: false },
+      hong:  { 1: false, 2: false, 3: false }
+    };
+    
+    let currentRound = 1;
+    let matchEnded = false;
+    let isRestMode = false;
+    let isKeshiMode = false;
+    let savedMatchTime = 120;
+    let pendingWinner = null;
+    let pendingReason = "";
+    let isMatchWinTrigger = false;
+    let lastPauseReason = "";
+
+    let roundWinnersHistory = { 1: null, 2: null, 3: null };
+
+    let roundScoresHistory = {
+      chung: { 1: 0, 2: 0, 3: 0 },
+      hong:  { 1: 0, 2: 0, 3: 0 }
+    };
+
+    let roundGamjeomHistory = {
+      chung: { 1: 0, 2: 0, 3: 0 },
+      hong:  { 1: 0, 2: 0, 3: 0 }
+    };
+
+    let passedMatches = JSON.parse(localStorage.getItem('passed_matches')) || [];
+    let registeredMatches = JSON.parse(localStorage.getItem('registered_matches')) || [];
+
+    let savedConfig = JSON.parse(localStorage.getItem('match_config'));
+    let config = savedConfig || {
+      arenaId: "ARENA-1",
+      duration: 120,
+      restTime: 60,
+      judgesCount: 3,
+      maxGamjeom: 5,
+      ceilingPoint: 12,
+      gapPoint: 12
+    };
+
+    let savedActiveMatch = JSON.parse(localStorage.getItem('active_match_data'));
+    let activeMatch = savedActiveMatch || {
+      matchNo: "001",
+      category: "SENIOR MALE -58KG",
+      chungName: "chung",
+      chungClub: "",
+      hongName: "hong",
+      hongClub: ""
+    };
+
+    let timeRemaining = config.duration;
+    let timerInterval = null;
+    let isRunning = false;
+
+    let gamjeomPromptTarget = 'chung';
+    let gamjeomPromptDelta = 1;
+
+    const pointTypeNames = {
+      punch: 'Punch (+1)',
+      body: 'Body (+2)',
+      head: 'Head (+3)',
+      turnBody: 'T.Body (+4)',
+      turnHead: 'T.Head (+5)'
+    };
+
+    let peer = null;
+    let pendingVotes = [];
+
+    let audioCtx = null;
+    function playBeep(freq, duration) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.log("Audio error:", e);
+      }
+    }
+
+function handleReverseButtonClick() {
+  isExtendedSwapped = !isExtendedSwapped;
+  syncToExtend(); // Kirim status terbaru ke layar Extend
+}
+
+
+function updateMiniRoundScores(isRest) {
+  const chungElem = document.getElementById('chung-mini-scores');
+  const hongElem = document.getElementById('hong-mini-scores');
+
+  if (!chungElem || !hongElem) return;
+
+  const history = (typeof roundScoresHistory !== 'undefined') 
+    ? roundScoresHistory 
+    : (window.roundScoresHistory || { chung: {}, hong: {} });
+
+  if (isRest) {
+    let chungHTML = '';
+    let hongHTML = '';
+
+    for (let r = 1; r <= 3; r++) {
+      // Ambil nilai skor, jika null/undefined otomatis set ke 0
+      const cPoints = (history.chung && history.chung[r] !== undefined && history.chung[r] !== null) 
+        ? history.chung[r] 
+        : 0;
+
+      const hPoints = (history.hong && history.hong[r] !== undefined && history.hong[r] !== null) 
+        ? history.hong[r] 
+        : 0;
+
+      // Cetak R1, R2, dan R3 tanpa pengecekan kondisional
+      chungHTML += `
+        <div class="mini-score-item">
+          <span class="round-label">R${r}</span>
+          <span class="round-value">${cPoints}</span>
+        </div>`;
+
+      hongHTML += `
+        <div class="mini-score-item">
+          <span class="round-label">R${r}</span>
+          <span class="round-value">${hPoints}</span>
+        </div>`;
+    }
+
+    chungElem.innerHTML = chungHTML;
+    hongElem.innerHTML = hongHTML;
+
+    chungElem.style.display = 'flex';
+    hongElem.style.display = 'flex';
+  } else {
+    chungElem.innerHTML = '';
+    hongElem.innerHTML = '';
+    chungElem.style.display = 'none';
+    hongElem.style.display = 'none';
+  }
+}
+
+   function flashJudgeBox(judgeId, fighter, pointsValue) {
+      if (judgeId === undefined || judgeId === null) {
+        console.warn("flashJudgeBox: judgeId kosong/tidak valid");
+        return;
+      }
+      
+      // 1. Amankan judgeId agar selalu berupa string (mencegah error .split jika berupa angka)
+      const judges = String(judgeId).split(',').map(j => j.trim());
+      
+      let glowClass = 'glow-yellow';
+      let pts = parseInt(pointsValue) || 1;
+      if (pts === 1) glowClass = 'glow-yellow';
+      else if (pts === 2) glowClass = 'glow-blue';
+      else if (pts === 3) glowClass = 'glow-red';
+      else if (pts === 4) glowClass = 'glow-purple';
+      else if (pts === 5) glowClass = 'glow-orange';
+      else if (pts === 6) glowClass = 'glow-darkgreen';
+
+      // 2. Normalisasi penamaan fighter untuk mengantisipasi perbedaan format ID HTML
+      let fNorm = fighter ? String(fighter).toLowerCase().trim() : '';
+      let possibleFighters = [];
+      
+      if (fNorm === 'chung' || fNorm === '1' || fNorm === 'blue') {
+        possibleFighters = ['chung', 'blue', '1'];
+      } else if (fNorm === 'hong' || fNorm === '2' || fNorm === 'red') {
+        possibleFighters = ['hong', 'red', '2'];
+      } else {
+        possibleFighters = ['chung', 'hong', 'blue', 'red'];
+      }
+
+      judges.forEach(j => {
+        let targetIds = [];
+        possibleFighters.forEach(f => {
+          targetIds.push(`hdr-box-${j}-${f}`);
+        });
+
+        targetIds.forEach(id => {
+          const box = document.getElementById(id);
+          
+          // Debugging: Buka F12 di browser untuk melihat apakah elemennya tertangkap
+          // console.log(`Mencari ID: ${id} | Ketemu:`, !!box); 
+
+          if (box) {
+            // Bersihkan timeout sebelumnya jika ada penekanan beruntun
+            if (box.dataset.timeoutId) {
+              clearTimeout(parseInt(box.dataset.timeoutId));
+            }
+            
+            // Hapus semua kelas glow lama lalu pasang yang baru
+            box.classList.remove('glow-yellow', 'glow-blue', 'glow-red', 'glow-purple', 'glow-orange', 'glow-darkgreen');
+            box.classList.add(glowClass);
+            // Pastikan kelas dasar tetap ada
+            if (!box.classList.contains('judge-box-hdr')) {
+              box.classList.add('judge-box-hdr');
+            }
+            
+            // Set timer untuk mematikan kembali lampu indikator
+            const timeoutId = setTimeout(() => {
+              box.classList.remove('glow-yellow', 'glow-blue', 'glow-red', 'glow-purple', 'glow-orange', 'glow-darkgreen');
+            }, 1000);
+            
+            box.dataset.timeoutId = timeoutId;
+          }
+        });
+      });
+        if (typeof syncToExtend === 'function') {
+                     syncToExtend();
+                    }
+    }
+
+    function loadConfigToUI() {
+      document.getElementById('cfg-arena-id').value = config.arenaId;
+      document.getElementById('cfg-duration').value = config.duration;
+      document.getElementById('cfg-rest').value = config.restTime;
+      document.getElementById('cfg-judges').value = config.judgesCount;
+      document.getElementById('cfg-max-gamjeom').value = config.maxGamjeom;
+      document.getElementById('cfg-ceiling-point').value = config.ceilingPoint;
+      document.getElementById('cfg-gap-point').value = config.gapPoint;
+
+      document.getElementById('match-no').innerText = activeMatch.matchNo;
+      document.getElementById('category').innerText = activeMatch.category;
+      document.getElementById('chung-name').innerText = activeMatch.chungName;
+      document.getElementById('chung-club').innerText = activeMatch.chungClub;
+      document.getElementById('hong-name').innerText = activeMatch.hongName;
+      document.getElementById('hong-club').innerText = activeMatch.hongClub;
+
+      document.getElementById('cfg-match-no').value = activeMatch.matchNo;
+      document.getElementById('cfg-category').value = activeMatch.category;
+      document.getElementById('cfg-chung-name').value = activeMatch.chungName;
+      document.getElementById('cfg-chung-club').value = activeMatch.chungClub;
+      document.getElementById('cfg-hong-name').value = activeMatch.hongName;
+      document.getElementById('cfg-hong-club').value = activeMatch.hongClub;
+
+      timeRemaining = config.duration;
+    }
+
+function initPeerServer() {
+  if (peer) { try { peer.destroy(); } catch(e){} }
+
+  peer = new Peer(config.arenaId, {
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    },
+    debug: 1
+  });
+
+  peer.on('open', (id) => {
+    console.log(`[WEBRTC V5.3] Server Scoreboard Siap. Arena ID: ${id}`);
+  });
+
+  peer.on('connection', (conn) => {
+    console.log('[WEBRTC V5.3] Remote Juri Terhubung:', conn.peer);
+
+    conn.on('data', (data) => {
+      // ===== KONVERSI POIN 5 MENJADI 6 DARI PEERJS =====
+      if (data.points === 5) {
+        data.points = 6;
+      }
+
+      if (data.judge) {
+        flashJudgeBox(data.judge, data.fighter, data.points || 1);
+        const dot = document.getElementById(`dot-${data.judge}`);
+        if (dot) {
+          dot.classList.add('active');
+          setTimeout(() => dot.classList.remove('active'), 1000);
+        }
+      }
+
+      const isScoreMessage = (data.msgType === 'SCORE_INPUT') || (data.fighter && data.points);
+      if (isScoreMessage) {
+        processJudgeVote(data);
+      }
+    });
+  });
+}
+
+function processJudgeVote(voteData) {
+  if (!isRunning || isRestMode || isKeshiMode || matchEnded) return;
+
+  // ===== ANTISIPASI TAMBAHAN: KONVERSI POIN 5 KE 6 =====
+  if (voteData.points === 5) {
+    voteData.points = 6;
+  }
+
+  const techType = voteData.type || voteData.scoreType || 'punch';
+  const settingJudges = parseInt(config.judgesCount) || 3;
+  const judgeId = voteData.judge || 'J1';
+
+  let requiredMatchingVotes = settingJudges === 2 ? 2 : (settingJudges === 3 ? 2 : 1);
+  if (requiredMatchingVotes === 1) {
+    modifyScore(voteData.fighter, voteData.points, techType, judgeId);
+    return;
+  }
+
+  const now = Date.now();
+  const timeWindow = 1000;
+
+  pendingVotes = pendingVotes.filter(v => (now - v.timestamp) < timeWindow);
+  pendingVotes = pendingVotes.filter(v => !(v.judge === judgeId && v.fighter === voteData.fighter && v.points === voteData.points && v.type === techType));
+
+  pendingVotes.push({ 
+    judge: judgeId, 
+    fighter: voteData.fighter, 
+    points: voteData.points, 
+    type: techType, 
+    timestamp: now 
+  });
+
+  const matchKey = `${voteData.fighter}_${voteData.points}_${techType}`;
+  const matchingVotes = pendingVotes.filter(v => `${v.fighter}_${v.points}_${v.type}` === matchKey);
+  const uniqueJudges = [...new Set(matchingVotes.map(v => v.judge))];
+
+  if (uniqueJudges.length >= requiredMatchingVotes) {
+    modifyScore(voteData.fighter, voteData.points, techType, uniqueJudges.join(', '));
+    pendingVotes = pendingVotes.filter(v => `${v.fighter}_${v.points}_${v.type}` !== matchKey);
+  }
+}
+    function updateManualButtonsState() {
+      const manualButtons = document.querySelectorAll('.manual-ctrl-btn');
+      manualButtons.forEach(btn => {
+        // Izinkan tombol Tambah Gam-Jeom tetap aktif meskipun timer running
+        const isGamjeomBtn = btn.getAttribute('onclick') && btn.getAttribute('onclick').includes('promptGamjeom');
+        
+        if (isGamjeomBtn) {
+          btn.disabled = false;
+        } else {
+          btn.disabled = isRunning;
+        }
+      });
+    }
+
+// Dibuat satu kali di atas
+const scoreboardChannel =
+    typeof BroadcastChannel !== "undefined"
+        ? new BroadcastChannel("tkd_scoreboard_channel")
+        : null;
+
+function syncToExtend() {
+
+    // ===============================
+    // Status Modal Woose Girok
+    // ===============================
+    const wooseModal = document.getElementById("identicalModal");
+    const isWooseShow = wooseModal &&
+        window.getComputedStyle(wooseModal).display === "flex";
+
+    // ===============================
+    // Status Overlay Winner
+    // ===============================
+    const winnerOverlay = document.getElementById("fullscreenWinnerOverlay");
+    const isWinnerShow = winnerOverlay &&
+        window.getComputedStyle(winnerOverlay).display === "flex";
+
+    let winnerData = null;
+
+    if (isWinnerShow) {
+        winnerData = {
+            show: true,
+            fighter: winnerOverlay.classList.contains("bg-chung")
+                ? "chung"
+                : "hong",
+            matchNo: document.getElementById("fsMatchNo")?.innerText.replace("MATCH NO : ", "") || "",
+            name: document.getElementById("fsWinnerName")?.innerText || "",
+            club: document.getElementById("fsWinnerClub")?.innerText || "",
+            reason: document.getElementById("fsWinnerReason")?.innerText || ""
+        };
+    }
+
+    const getElText = (id) =>
+        document.getElementById(id)?.innerText || "";
+
+    // ===========================================
+    // HELPER: Cek Status Kedip (Glow) Juri Real-time
+    // ===========================================
+    const getJudgeGlows = (fighter) => {
+    return [1, 2, 3].map(j => {
+
+        const box = document.getElementById(
+            `hdr-box-J${j}-${fighter}`
+        );
+
+        if (!box) return null;
+
+        return Array.from(box.classList)
+            .find(c => c.startsWith('glow-')) || null;
+    });
+};
+
+    // ===========================================
+    // SATU PAYLOAD UNTUK SEMUA MEDIA
+    // ===========================================
+    const syncPayload = {
+
+        // Score
+        scores: scores ?? { chung: 0, hong: 0 },
+        gamjeom: gamjeom ?? { chung: 0, hong: 0 },
+
+        // Timer
+        timeRemaining,
+        currentRound,
+        isRunning,
+        isRestMode,
+        isKeshiMode,
+        matchEnded,
+
+        // Match
+        roundWins,
+        roundScoresHistory,
+        roundScores: roundScoresHistory,
+        activeMatch,
+        matchDetail,
+
+        // History
+        history: {
+            chung: scoreHistory?.chung || [],
+            hong: scoreHistory?.hong || []
+        },
+
+        // Header
+        eventName: getElText("eventNameDisplay") || getElText("extEventName"),
+        categoryName: getElText("categoryDisplay") || getElText("extCategoryName"),
+        matName: getElText("matNameDisplay") || getElText("extMatName"),
+        matchNo: getElText("matchNumberDisplay") || getElText("extMatchNo"),
+
+        // Athlete
+        chungName: getElText("chungNameDisplay") || getElText("extChungName"),
+        chungClub: getElText("chungClubDisplay") || getElText("extChungClub"),
+        hongName: getElText("hongNameDisplay") || getElText("extHongName"),
+        hongClub: getElText("hongClubDisplay") || getElText("extHongClub"),
+
+        superioritySide:
+            typeof getSuperiorityLeader === "function"
+                ? getSuperiorityLeader()
+                : null,
+
+        // Overlay
+        showWooseGirok: isWooseShow,
+        matchWinner: winnerData,
+        isSwapped: !!isExtendedSwapped,
+
+        // Riwayat Poin Sah
+        judges: {
+            chung: scoreHistory?.chung?.at(-1) || [null, null, null],
+            hong: scoreHistory?.hong?.at(-1) || [null, null, null]
+        },
+
+        // PERBAIKAN: Status Lampu Indikator Juri Real-time
+        judgeGlows: {
+            chung: getJudgeGlows("chung"),
+            hong: getJudgeGlows("hong")
+        }
+    };
+
+    // ===========================================
+    // ELECTRON IPC
+    // ===========================================
+    try {
+        if (window.electron?.syncExtend) {
+            window.electron.syncExtend(syncPayload);
+        }
+    } catch (err) {
+        console.error("Electron IPC Error:", err);
+    }
+
+    // ===========================================
+    // BROADCAST CHANNEL
+    // ===========================================
+    try {
+        if (scoreboardChannel) {
+            scoreboardChannel.postMessage(syncPayload);
+        }
+    } catch (err) {
+        console.error("Broadcast Error:", err);
+    }
+}
+
+function updateDisplay() {
+  const chungScoreElem = document.getElementById('chung-score');
+  const hongScoreElem = document.getElementById('hong-score');
+  const chungGamjeomElem = document.getElementById('chung-gamjeom');
+  const hongGamjeomElem = document.getElementById('hong-gamjeom');
+  const roundDisplayElem = document.getElementById('round-display');
+
+  // --- HITUNG SKOR YANG DITAMPILKAN ---
+  let displayChung = scores.chung;
+  let displayHong = scores.hong;
+
+  // Jika REST TIME / MATCH ENDED: Tampilkan jumlah ronde yang dimenangkan (1-0, 1-1, dst)
+  if ((typeof isRestMode !== 'undefined' && isRestMode) || matchEnded) {
+    const countWins = (winObj) => {
+      if (!winObj) return 0;
+      let count = 0;
+      for (let i = 1; i <= 3; i++) {
+        if (winObj[i] === true) count++;
+      }
+      return count;
+    };
+    displayChung = countWins(roundWins?.chung);
+    displayHong = countWins(roundWins?.hong);
+  }
+
+  if (chungScoreElem) chungScoreElem.innerText = displayChung;
+  if (hongScoreElem) hongScoreElem.innerText = displayHong;
+  if (chungGamjeomElem) chungGamjeomElem.innerText = gamjeom.chung;
+  if (hongGamjeomElem) hongGamjeomElem.innerText = gamjeom.hong;
+  if (roundDisplayElem) roundDisplayElem.innerText = currentRound;
+
+  if (typeof updateScoreColors === 'function') {
+    updateScoreColors();
+  }
+
+  // Update tampilan mini scores (cukup dipanggil 1x)
+  if (typeof updateMiniRoundScores === 'function') {
+    updateMiniRoundScores(isRestMode || matchEnded);
+  }
+
+  // --- FORMAT TIMER ---
+  const minutes = Math.floor(timeRemaining / 60);
+  const seconds = Math.floor(timeRemaining % 60);
+
+  let timerDisplayStr;
+  if (isRunning && !isRestMode && !isKeshiMode && timeRemaining <= 10 && timeRemaining > 0) {
+    timerDisplayStr = timeRemaining.toFixed(2);
+  } else {
+    timerDisplayStr = `${minutes}:${String(seconds).padStart(2,'0')}`;
+  }
+
+  const timerDispElem = document.getElementById('timer-display');
+  if (timerDispElem) {
+    timerDispElem.innerText = timerDisplayStr;
+    timerDispElem.classList.remove('rest-mode', 'keshi-mode', 'pause-highlight');
+  }
+
+  const timerStatus = document.getElementById('timer-status');
+  const reasonBox = document.getElementById('timerReasonBox');
+
+  if (isRestMode) {
+    if (timerStatus) {
+      timerStatus.innerText = "REST TIME";
+      timerStatus.style.color = "#e6b400";
+    }
+    if (timerDispElem) timerDispElem.classList.add('rest-mode');
+    if (reasonBox) reasonBox.style.display = 'none';
+  } else if (isKeshiMode) {
+    if (timerStatus) {
+      timerStatus.innerText = "KYE-SHI";
+      timerStatus.style.color = "#ff1744";
+    }
+    if (timerDispElem) timerDispElem.classList.add('keshi-mode');
+    if (reasonBox) reasonBox.style.display = 'none';
+  } else if (matchEnded) {
+    if (timerStatus) {
+      timerStatus.innerText = "MATCH ENDED";
+    }
+    if (reasonBox) reasonBox.style.display = 'none';
+  } else if (isRunning) {
+    if (timerStatus) {
+      timerStatus.innerText = "RUNNING";
+      timerStatus.style.color = "#00e676";
+    }
+    if (reasonBox) reasonBox.style.display = 'none';
+  } else {
+    if (timerStatus) {
+      timerStatus.innerText = "PAUSE";
+      timerStatus.style.color = "#e6b400";
+    }
+    if (timerDispElem) timerDispElem.classList.add('pause-highlight');
+    if (reasonBox) {
+      reasonBox.style.display = (typeof lastPauseReason !== "undefined" && lastPauseReason) ? 'block' : 'none';
+    }
+  }
+
+  // --- PERBAIKAN LOGIKA WIN DOT (Selalu update class 'active' kapan pun) ---
+  for (let i = 1; i <= 3; i++) {
+    const chungWinDot = document.getElementById(`chung-r${i}`);
+    const hongWinDot = document.getElementById(`hong-r${i}`);
+
+    if (chungWinDot) {
+      chungWinDot.style.visibility = 'visible';
+      chungWinDot.classList.toggle('active', roundWins?.chung?.[i] === true);
+    }
+    if (hongWinDot) {
+      hongWinDot.style.visibility = 'visible';
+      hongWinDot.classList.toggle('active', roundWins?.hong?.[i] === true);
+    }
+  }
+
+  if (typeof updateManualButtonsState === 'function') {
+    updateManualButtonsState();
+  }
+
+  // Kirim data terbaru ke layar publik (extend)
+  syncToExtend();
+}
+// Fungsi efek suara digital (Beep/Ding Sah Poin) menggunakan Web Audio API
+function playValidScoreSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // 1. Efek suara bass benturan berat (Thud)
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        osc.type = 'triangle'; // Gelombang suara lebih tebal/berat
+        
+        // Frekuensi meluncur turun dengan cepat (efek benturan/impact drop)
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.25);
+        
+        // Envelope volume
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+
+        // 2. Tambahan noise renyah di awal (efek gebrakan/pukul)
+        const bufferSize = audioCtx.sampleRate * 0.1; // 100ms noise
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+
+        noise.start();
+
+      } catch (e) {
+        console.log("Audio API tidak didukung atau diblokir browser:", e);
+      }
+    }
+
+
+function getSuperiorityLeader() {
+    const c = matchDetail.chung;
+    const h = matchDetail.hong;
+
+    const criteriaList = [
+        'turnHead',
+        'turnBody',
+        'head',
+        'body',
+        'punch'
+    ];
+
+    for (const key of criteriaList) {
+
+        if (c[key] > h[key]) return 'chung';
+        if (h[key] > c[key]) return 'hong';
+
+    }
+
+    return null;
+}
+
+   function updateScoreColors() {
+      const chungElem = document.getElementById('chung-score');
+      const hongElem = document.getElementById('hong-score');
+
+      chungElem.className = "score-display";
+      hongElem.className = "score-display";
+
+      if (scores.chung > scores.hong) {
+        chungElem.classList.add('color-yellow');
+        hongElem.classList.add('color-white');
+      } else if (scores.hong > scores.chung) {
+        chungElem.classList.add('color-white');
+        hongElem.classList.add('color-yellow');
+      } else {
+        // Jika skor total seri, tentukan berdasarkan keunggulan teknik (Superioritas)
+        const superior = getSuperiorityLeader();
+        if (superior === 'chung') {
+          chungElem.classList.add('color-yellow');
+          hongElem.classList.add('color-white');
+        } else if (superior === 'hong') {
+          chungElem.classList.add('color-white');
+          hongElem.classList.add('color-yellow');
+        } else {
+          const c = matchDetail.chung;
+          const h = matchDetail.hong;
+          // Cek apakah seluruh rincian jenis teknik benar-benar persis sama
+          const isTechniqueIdentical = (c.turnHead === h.turnHead && c.turnBody === h.turnBody && c.head === h.head && c.body === h.body && c.punch === h.punch);
+          
+          if (!isTechniqueIdentical && scores.chung === scores.hong && scores.chung > 0) {
+            // Jika seri poin tapi ada perbedaan rincian teknik yang saling mengimbangi
+            chungElem.classList.add('color-white');
+            hongElem.classList.add('color-white');
+          } else {
+            chungElem.classList.add('color-white');
+            hongElem.classList.add('color-white');
+          }
+        }
+      }
+    }
+
+    function addSideHistoryLog(fighter, actionText, deltaValue, isGamjeom = false, judgeId = 'J1', isTech = false, customDisplay = null) {
+      let minutes = Math.floor(timeRemaining / 60);
+      let seconds = timeRemaining % 60;
+      let timestamp = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+      let logItem = {
+        round: currentRound,
+        time: timestamp,
+        action: actionText,
+        delta: deltaValue,
+        isGamjeom: isGamjeom,
+        isTech: isTech,
+        customDisplay: customDisplay,
+        judge: judgeId
+      };
+
+      let rowEntry = { J1: null, J2: null, J3: null };
+      let judges = judgeId.split(',').map(j => j.trim());
+      
+      if (judges.length > 1 || judgeId.includes('J')) {
+        judges.forEach(j => {
+          let targetJ = ['J1', 'J2', 'J3'].includes(j) ? j : 'J1';
+          rowEntry[targetJ] = logItem;
+        });
+      } else {
+        rowEntry['J1'] = logItem;
+      }
+
+      scoreHistory[fighter].push(rowEntry);
+      renderSideHistoryUI(fighter);
+    }
+
+   function renderSideHistoryUI(fighter) {
+      const containerId = fighter === 'chung' ? 'gridHistoryChung' : 'gridHistoryHong';
+      const container = document.getElementById(containerId);
+      
+      let rawHistory = scoreHistory[fighter];
+      let displayRows = [];
+
+      // Saring data: Buang baris jika mengandung Gam-jeom di J1, J2, atau J3
+      if (rawHistory) {
+        displayRows = rawHistory.filter(row => {
+          let hasGamjeom = (row.J1 && row.J1.isGamjeom) || 
+                           (row.J2 && row.J2.isGamjeom) || 
+                           (row.J3 && row.J3.isGamjeom);
+          return !hasGamjeom;
+        });
+      }
+
+      // Gunakan displayRows untuk sisa proses UI
+      if (!displayRows || displayRows.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#555; font-size:9px; padding:5px; width:100%">-</div>`;
+        return;
+      }
+
+      let rowsHtml = '';
+      displayRows.forEach(row => {
+        rowsHtml += `<div class="history-row-item">`;
+        
+        rowsHtml += `<div class="history-judge-column">`;
+        if (row.J1) rowsHtml += renderSingleHistoryItem(row.J1);
+        rowsHtml += `</div>`;
+
+        rowsHtml += `<div class="history-judge-column">`;
+        if (row.J2) rowsHtml += renderSingleHistoryItem(row.J2);
+        rowsHtml += `</div>`;
+
+        rowsHtml += `<div class="history-judge-column">`;
+        if (row.J3) rowsHtml += renderSingleHistoryItem(row.J3);
+        rowsHtml += `</div>`;
+
+        rowsHtml += `</div>`;
+      });
+
+      container.innerHTML = rowsHtml;
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderSingleHistoryItem(item) {
+      let titleTooltip = `R${item.round} [${item.time}]`;
+      if (item.isTech) {
+        return `<div class="history-box-full-row tech-box" title="${titleTooltip}"><span style="font-size:7px; font-weight:900;">${item.customDisplay || item.delta}</span></div>`;
+      } else if (item.isGamjeom) {
+        return `<div class="history-box-full-row gamjeom-box" title="${titleTooltip}"><span style="font-size:8px; font-weight:900;">G</span></div>`;
+      } else if (item.delta < 0) {
+        return `<div class="history-box-full-row minus-box" title="${titleTooltip}"><span style="font-size:8px; font-weight:900;">${item.delta}</span></div>`;
+      } else {
+        let ballClass = `ball-val-${item.delta}`;
+        return `
+          <div class="billiard-ball ${ballClass}" title="${titleTooltip}">
+            <div class="ball-number">${item.delta}</div>
+          </div>`;
+      }
+    }
+
+    function clearAllHistory() {
+      scoreHistory = {
+        chung: [],
+        hong: []
+      };
+      renderSideHistoryUI('chung');
+      renderSideHistoryUI('hong');
+    }
+
+    function modifyScore(fighter, deltaPoints, type, judgeId = 'J1') {
+      if (matchEnded) return;
+      
+      flashJudgeBox(judgeId, fighter, deltaPoints);
+
+      scores[fighter] += deltaPoints;
+      if (scores[fighter] < 0) scores[fighter] = 0;
+
+      if (type) {
+        if (deltaPoints > 0) {
+          matchDetail[fighter][type] += 1;
+          matchDetail[fighter].hits += 1;
+        } else if (deltaPoints < 0 && matchDetail[fighter][type] > 0) {
+          matchDetail[fighter][type] -= 1;
+          if (matchDetail[fighter].hits > 0) matchDetail[fighter].hits -= 1;
+        }
+      }
+
+      // --- BUNYIKAN SUARA HANYA JIKA ADA POIN SAH YANG MASUK (> 0) ---
+      if (deltaPoints > 0) {
+        playValidScoreSound();
+      }
+
+      const actionLabel = type ? (pointTypeNames[type] || type) : 'Score';
+      addSideHistoryLog(fighter, actionLabel, deltaPoints, false, judgeId);
+
+      updateDisplay();
+      if (deltaPoints > 0) checkRoundStatus();
+    }
+
+function modifyTechnicalPoint(fighter, delta, judgeId = 'J1') {
+    if (matchEnded) return;
+
+    const isAddition = delta > 0;
+    const amount = Math.abs(delta);
+
+    flashJudgeBox(judgeId, fighter, delta);
+
+    if (isAddition) {
+        playValidScoreSound();
+    }
+
+    // ============================================================
+    // AMBIL HISTORY LOG TERAKHIR
+    // ============================================================
+    const historyList = historyLogs[fighter] || [];
+    const lastLog =
+        historyList.length > 0
+            ? historyList[historyList.length - 1]
+            : null;
+
+    // ============================================================
+    // AMBIL SCORE HISTORY TERAKHIR
+    // INILAH DATA YANG DIPAKAI BOLA BILLIARD
+    // ============================================================
+    const rows = scoreHistory[fighter] || [];
+
+    const lastRow =
+        rows.length > 0
+            ? rows[rows.length - 1]
+            : null;
+
+    // ============================================================
+    // T.POINT NAIK
+    // ============================================================
+    if (isAddition) {
+
+        scores[fighter] += amount;
+
+        // --------------------------------------------------------
+        // T.POINT +3
+        // HEAD 3 -> TURN HEAD 6
+        // --------------------------------------------------------
+        if (
+            amount === 3 &&
+            lastLog &&
+            lastLog.pts === 3
+        ) {
+
+            lastLog.pts = 6;
+            lastLog.type = 'turnHead';
+
+            // Statistik
+            matchDetail[fighter].head =
+                Math.max(0, matchDetail[fighter].head - 1);
+
+            matchDetail[fighter].turnHead += 1;
+
+            // ----------------------------------------------------
+            // UBAH BOLA BILLIARD TERAKHIR
+            // 3 -> 6
+            // UNTUK J1, J2, J3
+            // ----------------------------------------------------
+            if (lastRow) {
+
+                ['J1', 'J2', 'J3'].forEach(j => {
+
+                    const item = lastRow[j];
+
+                    if (!item || item.isGamjeom) return;
+
+                    if (Number(item.delta) === 3) {
+
+                        item.delta = 6;
+                        item.customDisplay = 6;
+                        item.isTech = true;
+
+                    }
+
+                });
+            }
+
+            // Catat aksi
+            addSideHistoryLog(
+                fighter,
+                'T.HEAD (+3)',
+                amount,
+                false,
+                judgeId
+            );
+
+        }
+
+        // --------------------------------------------------------
+        // T.POINT +2
+        // BODY 2 -> TURN BODY 4
+        // --------------------------------------------------------
+        else if (
+            amount === 2 &&
+            lastLog &&
+            lastLog.pts === 2
+        ) {
+
+            lastLog.pts = 4;
+            lastLog.type = 'turnBody';
+
+            // Statistik
+            matchDetail[fighter].body =
+                Math.max(0, matchDetail[fighter].body - 1);
+
+            matchDetail[fighter].turnBody += 1;
+
+            // ----------------------------------------------------
+            // UBAH BOLA BILLIARD TERAKHIR
+            // 2 -> 4
+            // UNTUK J1, J2, J3
+            // ----------------------------------------------------
+            if (lastRow) {
+
+                ['J1', 'J2', 'J3'].forEach(j => {
+
+                    const item = lastRow[j];
+
+                    if (!item || item.isGamjeom) return;
+
+                    if (Number(item.delta) === 2) {
+
+                        item.delta = 4;
+                        item.customDisplay = 4;
+                        item.isTech = true;
+
+                    }
+
+                });
+            }
+
+            // Catat aksi
+            addSideHistoryLog(
+                fighter,
+                'T.BODY (+2)',
+                amount,
+                false,
+                judgeId
+            );
+
+        }
+
+        // --------------------------------------------------------
+        // T.POINT BIASA
+        // --------------------------------------------------------
+        else {
+
+            addSideHistoryLog(
+                fighter,
+                `T.POINT (+${amount})`,
+                amount,
+                false,
+                judgeId
+            );
+        }
+
+    }
+
+    // ============================================================
+    // T.POINT TURUN / BATAL
+    // ============================================================
+    else {
+
+        if (scores[fighter] < amount) {
+            return;
+        }
+
+        scores[fighter] -= amount;
+
+        // --------------------------------------------------------
+        // BATAL T.HEAD
+        // 6 -> 3
+        // --------------------------------------------------------
+        if (
+            amount === 3 &&
+            lastLog &&
+            lastLog.pts === 6
+        ) {
+
+            lastLog.pts = 3;
+            lastLog.type = 'head';
+
+            // Statistik
+            matchDetail[fighter].turnHead =
+                Math.max(0, matchDetail[fighter].turnHead - 1);
+
+            matchDetail[fighter].head += 1;
+
+            // ----------------------------------------------------
+            // UBAH BOLA BILLIARD
+            // 6 -> 3
+            // J1, J2, J3
+            // ----------------------------------------------------
+            if (lastRow) {
+
+                ['J1', 'J2', 'J3'].forEach(j => {
+
+                    const item = lastRow[j];
+
+                    if (!item || item.isGamjeom) return;
+
+                    if (Number(item.delta) === 6) {
+
+                        item.delta = 3;
+                        item.customDisplay = 3;
+                        item.isTech = false;
+
+                    }
+
+                });
+            }
+
+            addSideHistoryLog(
+                fighter,
+                'Batal T.HEAD',
+                -amount,
+                false,
+                judgeId
+            );
+
+        }
+
+        // --------------------------------------------------------
+        // BATAL T.BODY
+        // 4 -> 2
+        // --------------------------------------------------------
+        else if (
+            amount === 2 &&
+            lastLog &&
+            lastLog.pts === 4
+        ) {
+
+            lastLog.pts = 2;
+            lastLog.type = 'body';
+
+            // Statistik
+            matchDetail[fighter].turnBody =
+                Math.max(0, matchDetail[fighter].turnBody - 1);
+
+            matchDetail[fighter].body += 1;
+
+            // ----------------------------------------------------
+            // UBAH BOLA BILLIARD
+            // 4 -> 2
+            // J1, J2, J3
+            // ----------------------------------------------------
+            if (lastRow) {
+
+                ['J1', 'J2', 'J3'].forEach(j => {
+
+                    const item = lastRow[j];
+
+                    if (!item || item.isGamjeom) return;
+
+                    if (Number(item.delta) === 4) {
+
+                        item.delta = 2;
+                        item.customDisplay = 2;
+                        item.isTech = false;
+
+                    }
+
+                });
+            }
+
+            addSideHistoryLog(
+                fighter,
+                'Batal T.BODY',
+                -amount,
+                false,
+                judgeId
+            );
+
+        }
+
+        // --------------------------------------------------------
+        // BATAL T.POINT BIASA
+        // --------------------------------------------------------
+        else {
+
+            addSideHistoryLog(
+                fighter,
+                'Batal T.POINT',
+                -amount,
+                false,
+                judgeId
+            );
+        }
+    }
+
+    // ============================================================
+    // RENDER ULANG BILLIARD
+    // ============================================================
+    renderSideHistoryUI(fighter);
+
+    // ============================================================
+    // UPDATE SCOREBOARD
+    // ============================================================
+    updateDisplay();
+
+    if (isAddition) {
+        checkRoundStatus();
+    }
+}
+
+function triggerSmartTechnicalPoint(fighter, isAddition) {
+    if (matchEnded || isRunning) return;
+
+    // true  = ▲
+    // false = ▼
+    triggerTechnicalPoint(
+        fighter,
+        isAddition ? 1 : -1
+    );
+}
+
+function triggerTechnicalPoint(fighter, direction) {
+    if (matchEnded || isRunning) return;
+
+    const rows = scoreHistory[fighter];
+    if (!rows || rows.length === 0) return;
+
+    let targetRowIndex = -1;
+    let oldVal = null;
+
+    // ============================================================
+    // CARI BARIS TERAKHIR YANG MEMILIKI BOLA YANG BISA DIUBAH
+    // ============================================================
+    for (let i = rows.length - 1; i >= 0; i--) {
+
+        const row = rows[i];
+        if (!row) continue;
+
+        for (const j of ['J1', 'J2', 'J3']) {
+
+            const item = row[j];
+
+            if (!item || item.isGamjeom) continue;
+
+            const val = Number(item.delta);
+
+            if (direction > 0) {
+                // UP:
+                // 2 -> 4
+                // 3 -> 6
+                if (val === 2 || val === 3) {
+                    targetRowIndex = i;
+                    oldVal = val;
+                    break;
+                }
+            } else {
+                // DOWN:
+                // 4 -> 2
+                // 6 -> 3
+                if (val === 4 || val === 6) {
+                    targetRowIndex = i;
+                    oldVal = val;
+                    break;
+                }
+            }
+        }
+
+        if (targetRowIndex !== -1) break;
+    }
+
+    if (targetRowIndex === -1 || oldVal === null) return;
+
+    const row = rows[targetRowIndex];
+
+    // ============================================================
+    // TENTUKAN TRANSFORMASI
+    // ============================================================
+    let newVal;
+    let oldType;
+    let newType;
+
+    if (direction > 0) {
+
+        if (oldVal === 2) {
+            // BODY -> TURN BODY
+            newVal = 4;
+            oldType = 'body';
+            newType = 'turnBody';
+        }
+
+        else if (oldVal === 3) {
+            // HEAD -> TURN HEAD
+            newVal = 6;
+            oldType = 'head';
+            newType = 'turnHead';
+        }
+
+    } else {
+
+        if (oldVal === 4) {
+            // TURN BODY -> BODY
+            newVal = 2;
+            oldType = 'turnBody';
+            newType = 'body';
+        }
+
+        else if (oldVal === 6) {
+            // TURN HEAD -> HEAD
+            newVal = 3;
+            oldType = 'turnHead';
+            newType = 'head';
+        }
+    }
+
+    if (newVal === undefined) return;
+
+    // ============================================================
+    // UBAH BOLA PADA SEMUA JURI DI BARIS TERSEBUT
+    // ============================================================
+    let changed = false;
+
+    for (const j of ['J1', 'J2', 'J3']) {
+
+        const item = row[j];
+
+        if (!item || item.isGamjeom) continue;
+
+        const val = Number(item.delta);
+
+        // Hanya ubah bola dengan nilai yang sama
+        if (val !== oldVal) continue;
+
+        item.delta = newVal;
+        item.customDisplay = newVal;
+
+        if (direction > 0) {
+            item.isTech = true;
+        } else {
+            item.isTech = false;
+        }
+
+        changed = true;
+    }
+
+    // Tidak ada bola yang berubah
+    if (!changed) return;
+
+    // ============================================================
+    // UBAH SKOR HANYA SEKALI
+    // ============================================================
+    scores[fighter] += (newVal - oldVal);
+
+    // Jangan sampai negatif
+    if (scores[fighter] < 0) {
+        scores[fighter] = 0;
+    }
+
+    // ============================================================
+    // UPDATE DETAIL TEKNIK
+    // ============================================================
+    if (matchDetail && matchDetail[fighter]) {
+
+        matchDetail[fighter][oldType] =
+            Math.max(
+                0,
+                (matchDetail[fighter][oldType] || 0) - 1
+            );
+
+        matchDetail[fighter][newType] =
+            (matchDetail[fighter][newType] || 0) + 1;
+    }
+
+    // ============================================================
+    // RENDER ULANG BOLA BILLIARD
+    // ============================================================
+    if (typeof renderSideHistoryUI === 'function') {
+        renderSideHistoryUI(fighter);
+    }
+
+    // ============================================================
+    // UPDATE SCOREBOARD
+    // ============================================================
+    updateDisplay();
+
+    // ============================================================
+    // CEK STATUS RONDE
+    // ============================================================
+    if (direction > 0) {
+        checkRoundStatus();
+    }
+}
+
+    function triggerManualRoundWin(winnerKey) {
+      if (matchEnded) return;
+      const reason = `Manual Round Win by ${winnerKey.toUpperCase()} Action`;
+      lastPauseReason = reason;
+      evaluateRoundResult(winnerKey, reason);
+    }
+
+    // Variabel penampung target & jumlah delta Gam-Jeom
+
+
+
+function promptGamjeom(fighter, deltaGamjeom = 1) {
+  if (matchEnded) return;
+
+  // 1. Otomatis Pause Timer jika pertandingan sedang berjalan
+  if (typeof isRunning !== 'undefined' && isRunning) {
+    if (typeof lastPauseReason !== 'undefined') lastPauseReason = "GAM-JEOM";
+    if (typeof pauseTimer === 'function') pauseTimer();
+  }
+
+  // 2. Simpan parameter target dan nilai delta (+1 atau +2)
+  gamjeomPromptTarget = fighter;
+  gamjeomPromptDelta = deltaGamjeom;
+
+  const fighterNameText = fighter === 'chung' ? 'Biru (Chung)' : 'Merah (Hong)';
+  const labelGamjeom = deltaGamjeom === 2 ? 'Double Gam-Jeom (+2)' : 'Gam-Jeom (+1)';
+
+  // 3. Update Teks Modal
+  document.getElementById('gp-title').innerText = `⚠️ Tambah ${labelGamjeom} (${fighterNameText})`;
+  document.getElementById('gp-message').innerText = `Konfirmasi penambahan ${labelGamjeom} untuk ${fighterNameText}?`;
+
+  // 4. Tampilkan Modal & Fokuskan Tombol YES (Siap di-Enter)
+  const modal = document.getElementById('gamjeomPromptModal');
+  modal.style.display = 'flex';
+  
+  // Timeout singkat untuk memastikan elemen modal sudah terdistribusi sempurna sebelum di-focus
+  setTimeout(() => {
+    const btnYes = document.getElementById('gp-btn-yes');
+    if (btnYes) btnYes.focus();
+  }, 50);
+}
+
+function confirmGamjeomPrompt(isConfirmed) {
+  document.getElementById('gamjeomPromptModal').style.display = 'none';
+  if (isConfirmed) {
+    // Eksekusi penambahan Gam-jeom sesuai besaran delta (+1 / +2)
+    modifyGamjeom(gamjeomPromptTarget, gamjeomPromptDelta, 'J1');
+  }
+}
+
+    document.addEventListener('keydown', function(e) {
+  const modal = document.getElementById('gamjeomPromptModal');
+  
+  // 1. Jika Modal Konfirmasi Terbuka
+  if (modal && modal.style.display === 'flex') {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      confirmGamjeomPrompt(true);
+    }
+    return; // Hentikan eksekusi shortcut lain jika modal sedang muncul
+  }
+
+  // 2. Tombol Panah Atas (Timer / Keshi Resume)
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (isKeshiMode) {
+      isKeshiMode = false;
+      timeRemaining = savedMatchTime;
+      const timerDisplay = document.getElementById('timer-display');
+      if (timerDisplay) timerDisplay.classList.remove('keshi-mode');
+      startTimer();
+    } else if (isRunning) {
+      pauseTimer();
+    } else {
+      startTimer();
+    }
+  } 
+  // 3. Tombol Panah Bawah (Toggle Keshi Timer)
+  else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (!isRunning) {
+      toggleKeshiTimer();
+    }
+  } 
+  // 4. Tombol Panah Kiri & Kanan (Gam-jeom Dinamis)
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    e.preventDefault();
+
+    // Cek apakah sisa waktu <= 10 detik ATAU pertandingan sudah berakhir
+    const isCriticalTime = (typeof timeRemaining !== 'undefined' && timeRemaining <= 10) || 
+                           (typeof matchEnded !== 'undefined' && matchEnded);
+    
+    // Jika waktu kritis berikan 2 Gam-jeom, jika waktu normal berikan 1 Gam-jeom
+    const delta = isCriticalTime ? 2 : 1;
+
+    if (e.key === 'ArrowLeft') {
+      promptGamjeom('chung', delta);
+    } else {
+      promptGamjeom('hong', delta);
+    }
+  }
+});
+
+    function modifyGamjeom(fighter, deltaGamjeom, judgeId = 'J1') {
+  if (matchEnded) return;
+  
+  const opponent = (fighter === 'chung') ? 'hong' : 'chung';
+
+  // Ambil besar nilai perubahan (misal: 1 atau 2)
+  const amount = Math.abs(deltaGamjeom);
+
+  if (deltaGamjeom > 0) {
+    // Tambah Gam-jeom dan Poin Lawan sesuai besaran delta (bisa +1 atau +2)
+    gamjeom[fighter] += amount;
+    scores[opponent] += amount;
+  } else {
+    // Kurangi Gam-jeom dan Poin Lawan, pastikan tidak minus
+    if (gamjeom[fighter] >= amount) {
+      gamjeom[fighter] -= amount;
+      if (scores[opponent] >= amount) {
+        scores[opponent] -= amount;
+      } else {
+        scores[opponent] = 0;
+      }
+    } else {
+      // Jika sisa gamjeom lebih kecil dari yang ingin dikurangi, kurangi sebisanya
+      const actualSub = gamjeom[fighter];
+      gamjeom[fighter] = 0;
+      scores[opponent] = Math.max(0, scores[opponent] - actualSub);
+    }
+  }
+
+  const actionText = deltaGamjeom > 0 ? `GAM-JEOM (+${amount})` : `Batal Gam-jeom (-${amount})`;
+  addSideHistoryLog(fighter, actionText, deltaGamjeom, true, judgeId);
+
+  updateDisplay();
+
+  // === TAMBAHAN PENGECEKAN BATAS MAKSIMAL GAM-JEOM ===
+  let maxLimit = parseInt(config.maxGamjeom) || 5;
+  if (gamjeom[fighter] >= maxLimit) {
+    pauseTimer();
+    const winningOpponent = (fighter === 'chung') ? 'hong' : 'chung';
+    const reason = `PUN - Win by Punishment (Batas Maksimal Gam-jeom Tercapai oleh ${fighter.toUpperCase()})`;
+    lastPauseReason = reason;
+    evaluateRoundResult(winningOpponent, reason);
+    return;
+  }
+  // ==================================================
+
+  if (deltaGamjeom > 0) checkRoundStatus();
+}
+
+function checkRoundStatus() {
+  let gapLimit = parseInt(config.gapPoint) || 0;
+  let ceilingLimit = parseInt(config.ceilingPoint) || 0;
+
+  // Cek Point Gap (PTG)
+  if (gapLimit > 0) {
+    if (Math.abs(scores.chung - scores.hong) >= gapLimit) {
+      pauseTimer();
+      let roundWinner = scores.chung > scores.hong ? 'chung' : 'hong';
+      let reason = `PTG - Win by Point Gap (Selisih >= ${gapLimit} Poin)`;
+      lastPauseReason = reason;
+      evaluateRoundResult(roundWinner, reason);
+      return;
+    }
+  }
+
+  // Cek Ceiling Point (Batas Maksimal Poin)
+  if (ceilingLimit > 0) {
+    if (scores.chung >= ceilingLimit || scores.hong >= ceilingLimit) {
+      pauseTimer();
+      let roundWinner = scores.chung > scores.hong ? 'chung' : 'hong';
+      let reason = `PTG - Win by Ceiling Point (${ceilingLimit} Poin Tercapai)`;
+      lastPauseReason = reason;
+      evaluateRoundResult(roundWinner, reason);
+      return;
+    }
+  }
+}
+
+    function handleTimeOut() {
+      if (isRestMode) {
+        // Mengubah mode istirahat selesai menjadi kondisi pause (tidak langsung start otomatis)
+        isRestMode = false;
+        updateMiniRoundScores(false);
+        currentRound++;
+        
+        if (currentRound > 3) {
+          currentRound = 3;
+          matchEnded = true;
+          updateDisplay();
+          return;
+        }
+
+        timeRemaining = config.duration;
+        savedMatchTime = config.duration;
+        scores.chung = 0;
+        scores.hong = 0;
+        gamjeom.chung = 0;
+        gamjeom.hong = 0;
+        
+        clearAllHistory();
+        
+        matchDetail = {
+          chung: { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 },
+          hong:  { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 }
+        };
+
+        isRunning = false; // Memastikan timer berhenti/pause
+        lastPauseReason = `Ronde ${currentRound} Dimulai (Silakan Tekan Start)`;
+        updateDisplay();
+        return;
+      }
+
+      if (isKeshiMode) {
+        isKeshiMode = false;
+        timeRemaining = savedMatchTime;
+        const timerDisplay = document.getElementById('timer-display');
+        timerDisplay.classList.remove('keshi-mode');
+        updateDisplay();
+        return;
+      }
+
+      if (scores.chung === scores.hong) {
+        evaluateTieBreakSuperiority();
+        return;
+      }
+
+      let roundWinner = null;
+      let reason = "";
+
+      if (scores.chung > scores.hong) {
+        roundWinner = 'chung';
+        reason = `PTF - Win by Final Score (${scores.chung} vs ${scores.hong})`;
+      } else if (scores.hong > scores.chung) {
+        roundWinner = 'hong';
+        reason = `PTF - Win by Final Score (${scores.hong} vs ${scores.chung})`;
+      }
+
+      lastPauseReason = reason;
+      evaluateRoundResult(roundWinner, reason);
+    }
+
+    function evaluateTieBreakSuperiority() {
+      const c = matchDetail.chung;
+      const h = matchDetail.hong;
+
+      const criteriaList = [
+        { key: 'turnHead', label: 'Turning Head (+5)' },
+        { key: 'turnBody', label: 'Turning Body (+4)' },
+        { key: 'head',     label: 'Head Kick (+3)' },
+        { key: 'body',     label: 'Body Kick (+2)' },
+        { key: 'punch',    label: 'Punch (+1)' }
+      ];
+
+      for (let item of criteriaList) {
+        if (c[item.key] > h[item.key]) {
+         const resultReason = `PTF - Superioritas ${item.label} (Poin Seri ${scores.chung}-${scores.hong})`;
+lastPauseReason = "";   // jangan tampil di timerReasonBox
+evaluateRoundResult('chung', resultReason);
+          return;
+        }
+        if (h[item.key] > c[item.key]) {
+          const resultReason = `PTF - Superioritas ${item.label} (Poin Seri ${scores.chung}-${scores.hong})`;
+lastPauseReason = "";
+evaluateRoundResult('hong', resultReason);
+return;
+          
+        }
+      }
+
+      document.getElementById('identicalModalText').innerHTML = 
+        `Poin kedua atlet sama (${scores.chung} - ${scores.hong}) dan seluruh komposisi teknik bernilai persis sama!<br>Silakan putuskan melalui <strong>Woose Girok (Superioritas Juri)</strong>:`;
+lastPauseReason = "";      
+document.getElementById('identicalModal').style.display = 'flex';
+updateDisplay();
+syncToExtend();
+    }
+
+    function closeIdenticalModal() {
+      document.getElementById('identicalModal').style.display = 'none';
+      syncToExtend();
+    }
+
+    function resolveIdenticalTie(chosenWinner) {
+      document.getElementById('identicalModal').style.display = 'none';
+      syncToExtend();
+      const reason = "SUP - Woose Girok / Superiority Decision (Teknik Identik / Poin & Komposisi Seri)";
+      lastPauseReason = reason;
+      evaluateRoundResult(chosenWinner, reason);
+    }
+
+    function evaluateRoundResult(roundWinner, reason) {
+      roundScoresHistory.chung[currentRound] = scores.chung;
+      roundScoresHistory.hong[currentRound] = scores.hong;
+      roundGamjeomHistory.chung[currentRound] = gamjeom.chung;
+      roundGamjeomHistory.hong[currentRound] = gamjeom.hong;
+
+      let tempChungWins = 0;
+      let tempHongWins = 0;
+      
+      for (let r = 1; r < currentRound; r++) {
+        if (roundWinnersHistory[r] === 'chung') tempChungWins++;
+        if (roundWinnersHistory[r] === 'hong') tempHongWins++;
+      }
+      if (roundWinner === 'chung') tempChungWins++;
+      else if (roundWinner === 'hong') tempHongWins++;
+
+      const isMatchOver = (tempChungWins >= 2 || tempHongWins >= 2 || currentRound >= 3);
+      triggerWinnerModal(roundWinner, reason, isMatchOver);
+    }
+
+    function triggerWinnerModal(winnerKey, reasonText, isMatchOver) {
+      pauseTimer();
+      pendingWinner = winnerKey;
+      pendingReason = reasonText;
+      isMatchWinTrigger = isMatchOver;
+
+      const modalBox = document.getElementById('winnerModalBox');
+      const winTitle = document.getElementById('win-fighter-name');
+      
+      modalBox.className = "winner-modal-content";
+      winTitle.className = "winner-title";
+
+      if (winnerKey === 'chung') {
+        modalBox.classList.add('winner-chung');
+        winTitle.classList.add('text-chung');
+      } else {
+        modalBox.classList.add('winner-hong');
+        winTitle.classList.add('text-hong');
+      }
+
+      const winnerName = winnerKey === 'chung' ? 
+        document.getElementById('chung-name').innerText : 
+        document.getElementById('hong-name').innerText;
+
+      document.getElementById('win-badge-text').innerText = isMatchWinTrigger ? `HASIL KEMENANGAN MATCH (BEST OF 3)` : `HASIL KEMENANGAN RONDE ${currentRound}`;
+      document.getElementById('win-fighter-name').innerText = `${winnerName} (${winnerKey.toUpperCase()})`;
+      document.getElementById('win-subtext').innerText = reasonText;
+
+      const btnThemeClass = winnerKey === 'chung' ? 'btn-chung-theme' : 'btn-hong-theme';
+      
+      // Tombol Yes diberi id="btnConfirmYes" agar bisa ditarget untuk auto-focus
+      document.getElementById('win-actions-box').innerHTML = `
+        <button class="btn-yes ${btnThemeClass}" id="btnConfirmYes" onclick="confirmWinner(true)">YES</button>
+        <button class="btn-no" onclick="confirmWinner(false)">NO</button>
+      `;
+
+      document.getElementById('winnerModal').style.display = 'flex';
+
+      // === MENJAMIN TOMBOL YES LANGSUNG TER-MARK / FOKUS ===
+      setTimeout(() => {
+        const btnYes = document.getElementById('btnConfirmYes');
+        if (btnYes) {
+          btnYes.focus();
+        }
+      }, 50);
+      // ====================================================
+    }
+
+   function confirmWinner(isConfirmed) {
+      document.getElementById('winnerModal').style.display = 'none';
+
+      if (isConfirmed && pendingWinner) {
+        const selectedReason = document.getElementById('wtReasonSelect').value || pendingReason;
+        lastPauseReason = selectedReason;
+        
+        roundWinnersHistory[currentRound] = pendingWinner;
+        roundWins[pendingWinner][currentRound] = true;
+        updateDisplay();
+
+        const totalChungWins = Object.values(roundWinnersHistory).filter(w => w === 'chung').length;
+        const totalHongWins = Object.values(roundWinnersHistory).filter(w => w === 'hong').length;
+
+        // =========================================================================
+        // PERUBAHAN DI SINI:
+        // Meskipun parameter 'isMatchWinTrigger' bernilai true (karena sudah menang 2 ronde 
+        // atau ronde 3 habis), kita ABAIKAN/HAPUS perintah 'showFullScreenWinner' di sini.
+        // Jadi, meskipun pop-up bertuliskan "HASIL KEMENANGAN MATCH (BEST OF 3)", 
+        // ketika tombol YES diklik, sistem HANYA mencatat riwayat ronde dan masuk ke 
+        // waktu istirahat (startRestPeriod()), BUKAN langsung membuka layar penuh.
+        // =========================================================================
+        
+        if (currentRound < 3 && totalChungWins < 2 && totalHongWins < 2) {
+          startRestPeriod();
+        } else {
+          // Meskipun sudah match point (2-0 / 2-1), arahkan tetap ke rest period / lanjut 
+          // tanpa memicu overlay fullscreen otomatis.
+          startRestPeriod(); 
+        }
+      }
+      pendingWinner = null;
+    }
+
+   function openManualWinModal(winnerKey) {
+      // 1. Simpan riwayat skor & gamjeom ronde saat ini terlebih dahulu jika diperlukan
+      roundScoresHistory.chung[currentRound] = scores.chung;
+      roundScoresHistory.hong[currentRound] = scores.hong;
+      roundGamjeomHistory.chung[currentRound] = gamjeom.chung;
+      roundGamjeomHistory.hong[currentRound] = gamjeom.hong;
+
+      const reasonText = "";
+      lastPauseReason = reasonText;
+
+      // 2. Matikan timer utama
+      pauseTimer();
+
+      // 3. Tandai pertandingan benar-benar selesai secara total
+      matchEnded = true;
+
+      // 4. Arsipkan pertandingan & LANGSUNG panggil overlay layar penuh (Win of the Match)
+      archiveCompletedMatch(winnerKey, reasonText);
+      showFullScreenWinner(winnerKey, reasonText);
+    }
+
+    function archiveCompletedMatch(winnerKey, reasonText) {
+      const matchNo = document.getElementById('match-no').innerText;
+      const category = document.getElementById('category').innerText;
+      const chungName = document.getElementById('chung-name').innerText;
+      const hongName = document.getElementById('hong-name').innerText;
+      const winnerName = winnerKey === 'chung' ? chungName : hongName;
+
+      const completedMatchData = {
+        matchNo,
+        category,
+        chungName,
+        hongName,
+        winnerName,
+        winnerKey,
+        reason: reasonText,
+        roundScores: JSON.parse(JSON.stringify(roundScoresHistory)),
+        roundGamjeoms: JSON.parse(JSON.stringify(roundGamjeomHistory)),
+        history: JSON.parse(JSON.stringify(scoreHistory)),
+        roundWins: JSON.parse(JSON.stringify(roundWins)),
+        roundWinnersHistory: JSON.parse(JSON.stringify(roundWinnersHistory))
+      };
+
+      passedMatches.push(completedMatchData);
+      localStorage.setItem('passed_matches', JSON.stringify(passedMatches));
+
+      registeredMatches = registeredMatches.filter(m => m.matchNo !== matchNo);
+      localStorage.setItem('registered_matches', JSON.stringify(registeredMatches));
+
+      renderMatchTable();
+    }
+
+    function startRestPeriod() {
+      isRestMode = true;
+      timeRemaining = config.restTime;
+      const timerDisplay = document.getElementById('timer-display');
+      timerDisplay.classList.add('rest-mode');
+
+      // TAMBAHKAN DUA BARIS INI
+ updateMiniRoundScores(true);
+
+      updateDisplay();
+      startTimer();
+    }
+
+    function toggleKeshiTimer() {
+      if (matchEnded) return;
+
+      const timerDisplay = document.getElementById('timer-display');
+
+      if (isKeshiMode) {
+        pauseTimer();
+        isKeshiMode = false;
+        timeRemaining = savedMatchTime;
+        timerDisplay.classList.remove('keshi-mode');
+        updateDisplay();
+      } else {
+        pauseTimer();
+        isKeshiMode = true;
+        savedMatchTime = timeRemaining;
+        timeRemaining = 60;
+        timerDisplay.classList.add('keshi-mode');
+        updateDisplay();
+        startTimer();
+      }
+    }
+
+   function startTimer() {
+
+    if (isRunning || matchEnded) return;
+    if (timeRemaining <= 0) return;
+
+    isRunning = true;
+
+    updateDisplay();
+
+    timerInterval = setInterval(() => {
+
+        if (timeRemaining > 0) {
+
+            timeRemaining = Math.max(0, +(timeRemaining - 0.01).toFixed(2));
+
+            updateDisplay();
+
+            if (timeRemaining <= 0) {
+
+                clearInterval(timerInterval);
+
+                playBeep(880,0.8);
+
+                pauseTimer();
+
+                handleTimeOut();
+
+            }
+
+        }
+
+    },10);
+
+}
+
+    function pauseTimer() {
+      if (!isRunning) return;
+      clearInterval(timerInterval);
+      isRunning = false;
+      updateDisplay();
+      isPaused = true; 
+
+    // Tambahkan baris ini untuk memunculkan tulisan TIME OUT
+    const reasonBox = document.getElementById('timerReasonBox');
+    if (reasonBox) {
+        reasonBox.innerText = "TIME OUT";
+        reasonBox.style.display = "block";
+    }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      if (isRestMode) {
+        timeRemaining = config.restTime;
+      } else if (isKeshiMode) {
+        timeRemaining = 60;
+      } else {
+        timeRemaining = config.duration;
+      }
+      updateDisplay();
+    }
+
+    function startNextRoundAutomatically() {
+      pauseTimer();
+      isRestMode = false;
+      currentRound++;
+      scores.chung = 0;
+      scores.hong = 0;
+      gamjeom.chung = 0;
+      gamjeom.hong = 0;
+
+      matchDetail.chung = { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 };
+      matchDetail.hong = { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 };
+      
+      clearAllHistory();
+      timeRemaining = config.duration;
+      
+      // Sesuai permintaan: setelah rest selesai, timer berhenti sejenak (pause) di awal ronde berikutnya
+      isRunning = false;
+      
+      
+      updateDisplay();
+    }
+
+    function nextRound() {
+      if (currentRound < 3 && !matchEnded) {
+        currentRound++;
+        scores.chung = 0;
+        scores.hong = 0;
+        gamjeom.chung = 0;
+        gamjeom.hong = 0;
+        matchDetail.chung = { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 };
+        matchDetail.hong = { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 };
+        clearAllHistory();
+        timeRemaining = config.duration;
+        isRestMode = false;
+        pauseTimer();
+        lastPauseReason = `RONDE ${currentRound} DIMULAI`;
+        updateDisplay();
+      }
+    }
+
+   function nextMatch() {
+  if (registeredMatches.length > 0) {
+    let nextM = registeredMatches.shift();
+    localStorage.setItem('registered_matches', JSON.stringify(registeredMatches));
+
+    activeMatch = {
+      matchNo: nextM.matchNo,
+      category: nextM.category,
+      chungName: nextM.chungName,
+      chungClub: nextM.chungClub,
+      hongName: nextM.hongName,
+      hongClub: nextM.hongClub
+    };
+    localStorage.setItem('active_match_data', JSON.stringify(activeMatch));
+
+    // 1. RESET VARIABEL RIWAYAT POIN RONDE
+    if (typeof roundScoresHistory !== 'undefined') {
+      roundScoresHistory = { chung: {}, hong: {} };
+    }
+
+    // 2. BERSIHKAN & SEMBUNYIKAN TAMPILAN MINI SCORES DI OPERATOR
+    const chungElem = document.getElementById('chung-mini-scores');
+    const hongElem = document.getElementById('hong-mini-scores');
+    if (chungElem) {
+      chungElem.innerHTML = '';
+      chungElem.style.display = 'none';
+    }
+    if (hongElem) {
+      hongElem.innerHTML = '';
+      hongElem.style.display = 'none';
+    }
+
+    // 3. JALANKAN PROSES BAWAAN
+    resetFullMatchState();
+    loadConfigToUI();
+    renderMatchTable();
+
+    // 4. KIRIM SINYAL SYNC DATA BERSIH KE EXTEND
+    if (typeof sendSyncExtend === 'function') {
+      sendSyncExtend();
+    } else if (typeof sendSyncData === 'function') {
+      sendSyncData();
+    }
+  } else {
+    alert("Antrean partai di 'Register Semua Partai' sudah habis!");
+  }
+}
+
+    function resetFullMatchState() {
+  pauseTimer();
+  scores = { chung: 0, hong: 0 };
+  gamjeom = { chung: 0, hong: 0 };
+  currentRound = 1;
+  matchEnded = false;
+  isRestMode = false;
+  isKeshiMode = false;
+
+  // TAMBAHAN 1: Reset riwayat skor poin ronde (agar mini-score tidak terbawa)
+  if (typeof roundScoresHistory !== 'undefined') {
+    roundScoresHistory = { chung: {}, hong: {} };
+  }
+
+  roundWinnersHistory = { 1: null, 2: null, 3: null };
+  roundWins = {
+    chung: { 1: false, 2: false, 3: false },
+    hong:  { 1: false, 2: false, 3: false }
+  };
+  matchDetail = {
+    chung: { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 },
+    hong:  { punch: 0, body: 0, head: 0, turnBody: 0, turnHead: 0, hits: 0 }
+  };
+  clearAllHistory();
+  timeRemaining = config.duration;
+  lastPauseReason = "";
+
+  // TAMBAHAN 2: Sembunyikan elemen mini score dari tampilan UI
+  if (typeof updateMiniRoundScores === 'function') {
+    updateMiniRoundScores(false);
+  }
+
+  updateDisplay();
+}
+
+    function showFullScreenWinner(winnerKey, reasonText) {
+      const winnerName = winnerKey === 'chung' ? document.getElementById('chung-name').innerText : document.getElementById('hong-name').innerText;
+      const winnerClub = winnerKey === 'chung' ? document.getElementById('chung-club').innerText : document.getElementById('hong-club').innerText;
+      
+      const overlay = document.getElementById('fullscreenWinnerOverlay');
+      const card = document.getElementById('fsWinnerCard');
+
+      overlay.className = "fullscreen-winner-overlay " + (winnerKey === 'chung' ? 'bg-chung' : 'bg-hong');
+      
+      document.getElementById('fsMatchNo').innerText = `MATCH NO : ${document.getElementById('match-no').innerText}`;
+      document.getElementById('fsWinnerName').innerText = winnerName;
+      document.getElementById('fsWinnerClub').innerText = winnerClub;
+      document.getElementById('fsWinnerReason').innerText = reasonText;
+
+      overlay.style.display = 'flex';
+      setTimeout(() => {
+        const btnNextMatch = document.querySelector('.fs-close-btn');
+        if (btnNextMatch) {
+          btnNextMatch.focus();
+        }
+      }, 50);
+      
+      // ======================================================================
+      // TAMBAHKAN INI AGAR IKUT TERKIRIM KE LAYAR EXTEND
+      if (typeof syncToExtend === 'function') {
+        syncToExtend();
+      }
+      // ======================================================================
+    }
+
+    function closeFullScreenWinner() {
+      document.getElementById('fullscreenWinnerOverlay').style.display = 'none';
+      if (registeredMatches.length > 0) {
+        nextMatch();
+      } else {
+        resetFullMatchState();
+      }
+    }
+
+    function openSettings() {
+      document.getElementById('settingsModal').style.display = 'flex';
+      renderMatchTable();
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function toggleSidePanel() {
+      const sidePanel = document.getElementById('sidePanelMatch');
+      sidePanel.style.display = (sidePanel.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function saveSettings() {
+      config.arenaId = document.getElementById('cfg-arena-id').value;
+      config.duration = parseInt(document.getElementById('cfg-duration').value) || 120;
+      config.restTime = parseInt(document.getElementById('cfg-rest').value) || 60;
+      config.judgesCount = parseInt(document.getElementById('cfg-judges').value) || 3;
+      config.maxGamjeom = parseInt(document.getElementById('cfg-max-gamjeom').value) || 5;
+      config.ceilingPoint = parseInt(document.getElementById('cfg-ceiling-point').value) || 12;
+      config.gapPoint = parseInt(document.getElementById('cfg-gap-point').value) || 12;
+
+      activeMatch.matchNo = document.getElementById('cfg-match-no').value;
+      activeMatch.category = document.getElementById('cfg-category').value;
+      activeMatch.chungName = document.getElementById('cfg-chung-name').value;
+      activeMatch.chungClub = document.getElementById('cfg-chung-club').value;
+      activeMatch.hongName = document.getElementById('cfg-hong-name').value;
+      activeMatch.hongClub = document.getElementById('cfg-hong-club').value;
+
+      localStorage.setItem('match_config', JSON.stringify(config));
+      localStorage.setItem('active_match_data', JSON.stringify(activeMatch));
+
+      loadConfigToUI();
+      initPeerServer();
+      closeSettings();
+      resetFullMatchState();
+    }
+
+    function registerNewMatch() {
+      let mNo = document.getElementById('cfg-match-no').value;
+      let cat = document.getElementById('cfg-category').value;
+      let cName = document.getElementById('cfg-chung-name').value;
+      let cClub = document.getElementById('cfg-chung-club').value;
+      let hName = document.getElementById('cfg-hong-name').value;
+      let hClub = document.getElementById('cfg-hong-club').value;
+
+      let newMatchItem = {
+        matchNo: mNo,
+        category: cat,
+        chungName: cName,
+        chungClub: cClub,
+        hongName: hName,
+        hongClub: hClub
+      };
+
+      registeredMatches.push(newMatchItem);
+      localStorage.setItem('registered_matches', JSON.stringify(registeredMatches));
+
+      // Sesuai permintaan 1: Reset nomor partai otomatis ke nomor berikutnya (misalnya 001 menjadi 002), nama Chung dan Hong diset default chung dan hong, klub kosong.
+      let nextNumStr = "001";
+      if (!isNaN(parseInt(mNo))) {
+        let nextNum = parseInt(mNo) + 1;
+        nextNumStr = nextNum.toString().padStart(mNo.length, '0');
+      }
+
+      document.getElementById('cfg-match-no').value = nextNumStr;
+      document.getElementById('cfg-chung-name').value = "chung";
+      document.getElementById('cfg-chung-club').value = "";
+      document.getElementById('cfg-hong-name').value = "hong";
+      document.getElementById('cfg-hong-club').value = "";
+
+      renderMatchTable();
+    }
+
+    function renderMatchTable() {
+      const tbody = document.getElementById('matchTableBody');
+      if (registeredMatches.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">Belum ada partai terdaftar.</td></tr>`;
+      } else {
+        let html = '';
+        registeredMatches.forEach((m, idx) => {
+          html += `
+            <tr ondblclick="loadRegisteredMatch(${idx})">
+              <td>${m.matchNo}</td>
+              <td>${m.category}</td>
+              <td><span class="badge-chung">${m.chungName}</span></td>
+              <td><span class="badge-hong">${m.hongName}</span></td>
+              <td><button class="btn-system" style="background:#c0392b; font-size:9px; padding:2px 6px;" onclick="deleteRegisteredMatch(${idx})">X</button></td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      }
+
+      const passedTbody = document.getElementById('passedMatchTableBody');
+      if (passedMatches.length === 0) {
+        passedTbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#777;">Belum ada partai selesai.</td></tr>`;
+      } else {
+        let pHtml = '';
+        passedMatches.forEach((pm, pIdx) => {
+          pHtml += `
+            <tr ondblclick="openReviewMatch(${pIdx})">
+              <td>${pm.matchNo}</td>
+              <td>${pm.category}</td>
+              <td><span style="color:#f1c40f; font-weight:bold;">${pm.winnerName}</span></td>
+              <td><button class="btn-system" style="background:#c0392b; font-size:9px; padding:2px 6px;" onclick="deletePassedMatch(${pIdx})">X</button></td>
+            </tr>
+          `;
+        });
+        passedTbody.innerHTML = pHtml;
+      }
+    }
+
+    function loadRegisteredMatch(index) {
+      let m = registeredMatches[index];
+      activeMatch = {
+        matchNo: m.matchNo,
+        category: m.category,
+        chungName: m.chungName,
+        chungClub: m.chungClub,
+        hongName: m.hongName,
+        hongClub: m.hongClub
+      };
+      localStorage.setItem('active_match_data', JSON.stringify(activeMatch));
+      loadConfigToUI();
+      closeSettings();
+      resetFullMatchState();
+    }
+
+    function deleteRegisteredMatch(index) {
+      registeredMatches.splice(index, 1);
+      localStorage.setItem('registered_matches', JSON.stringify(registeredMatches));
+      renderMatchTable();
+    }
+
+    function clearAllRegisteredMatches() {
+      registeredMatches = [];
+      localStorage.removeItem('registered_matches');
+      renderMatchTable();
+    }
+
+    function deletePassedMatch(index) {
+      passedMatches.splice(index, 1);
+      localStorage.setItem('passed_matches', JSON.stringify(passedMatches));
+      renderMatchTable();
+    }
+
+    function clearAllPassedMatches() {
+      passedMatches = [];
+      localStorage.removeItem('passed_matches');
+      renderMatchTable();
+    }
+
+    function openReviewMatch(index) {
+      const pm = passedMatches[index];
+      document.getElementById('rev-match-title').innerText = `PARTAI ${pm.matchNo} - ${pm.category}`;
+      document.getElementById('rev-chung-name').innerText = `${pm.chungName} (${pm.chungClub || '-'})`;
+      document.getElementById('rev-hong-name').innerText = `${pm.hongName} (${pm.hongClub || '-'})`;
+      document.getElementById('rev-reason-text').innerText = pm.reason;
+      document.getElementById('rev-winner-text').innerText = `${pm.winnerName} (${pm.winnerKey.toUpperCase()})`;
+
+      let roundsHtml = '';
+      for (let r = 1; r <= 3; r++) {
+        let rWinner = pm.roundWinnersHistory[r];
+        let rWinText = rWinner ? `Menang: ${rWinner.toUpperCase()}` : 'Belum/Tidak Main';
+        roundsHtml += `
+          <div style="display:flex; justify-content:space-between; font-size:12px; border-bottom:1px solid #333; padding:4px 0;">
+            <span>Ronde ${r}</span>
+            <span>Skor: <strong style="color:#3385ff">${pm.roundScores.chung[r]}</strong> - <strong style="color:#ff5555">${pm.roundScores.hong[r]}</strong></span>
+            <span style="color:#f1c40f;">${rWinText}</span>
+          </div>
+        `;
+      }
+      document.getElementById('rev-rounds-container').innerHTML = roundsHtml;
+      document.getElementById('reviewMatchModal').style.display = 'flex';
+      setTimeout(() => {
+        // Menargetkan tombol pertama/utama di dalam modal review (misalnya tombol Close/Lanjut)
+        const btnReviewAction = document.querySelector('#reviewMatchModal button, #reviewMatchModal .btn-yes, #reviewMatchModal .btn-close');
+        if (btnReviewAction) {
+          btnReviewAction.focus();
+        }
+      }, 50);
+      // ======================================================================
+    }
+ 
+
+    function closeReviewModal() {
+      document.getElementById('reviewMatchModal').style.display = 'none';
+    }
+
+    window.onload = function() {
+      loadConfigToUI();
+      initPeerServer();
+      updateDisplay();
+    };
+  </script>
+</body>
+</html>
