@@ -50,20 +50,25 @@
 
     .fighter-body-row { display:flex; flex-direction:row; flex:1; align-items:stretch; width:100%; min-height:0; }
 
+    /* ============= OPTIMASI: GPU ACCELERATION & PERFORMANCE ============= */
     .side-score-history { 
-  padding:6px; 
-  width:85px; 
-  flex-shrink:0; 
-  display:flex; 
-  flex-direction:column; 
-  gap:4px; 
-  overflow-y:auto; 
-  max-height:470px; 
-  height:100%; 
-  align-items:center; 
-  -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none; /* Firefox */
-}
+      padding:6px; 
+      width:85px; 
+      flex-shrink:0; 
+      display:flex; 
+      flex-direction:column; 
+      gap:4px; 
+      overflow-y:auto; 
+      max-height:470px; 
+      height:100%; 
+      align-items:center; 
+      will-change: transform;
+      transform: translate3d(0,0,0);
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .side-score-history::-webkit-scrollbar { display: none; }
+    
     .side-history-title { font-size:8px; color:#aaa; text-align:center; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:4px; margin-bottom:4px; font-weight:bold; width:100%; }
     .history-header-row { display:grid; grid-template-columns:repeat(3,1fr); width:100%; text-align:center; margin-bottom:4px; border-bottom:1px dashed rgba(255,255,255,0.15); padding-bottom:4px; justify-items:center; align-items:center; }
 
@@ -105,23 +110,51 @@
     }
 
    .history-grid-container { 
-  display:flex; 
-  flex-direction:column; 
-  width:100%; 
-  gap:1px; 
-  overflow-y:auto; 
-  max-height:380px; 
-  -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none; /* Firefox */
-}
+      display:flex; 
+      flex-direction:column; 
+      width:100%; 
+      gap:1px; 
+      overflow-y:auto; 
+      max-height:380px; 
+      will-change: transform;
+      transform: translate3d(0,0,0);
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
-.history-grid-container::-webkit-scrollbar,
-.side-score-history::-webkit-scrollbar {
-  display: none;
-}
-    .history-row-item { display:grid; grid-template-columns:repeat(3,1fr); width:100%; gap:2px; align-items:center; justify-items:center; background:rgba(255,255,255,0.03); border-radius:4px; padding:1px 0; }
+    .history-grid-container::-webkit-scrollbar,
+    .side-score-history::-webkit-scrollbar {
+      display: none;
+    }
+    .history-row-item { 
+      display:grid; 
+      grid-template-columns:repeat(3,1fr); 
+      width:100%; 
+      gap:2px; 
+      align-items:center; 
+      justify-items:center; 
+      background:rgba(255,255,255,0.03); 
+      border-radius:4px; 
+      padding:2px 0;
+      transition: none;
+      will-change: auto;
+    }
     .history-judge-column { display:flex; flex-direction:column; align-items:center; width:100%; }
-    .billiard-ball { width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; color:#000; border:1px solid rgba(255,255,255,0.2); margin:0 auto; }
+    .billiard-ball { 
+      width:15px; 
+      height:15px; 
+      border-radius:50%; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center; 
+      font-weight:bold; 
+      color:#000; 
+      border:1px solid rgba(255,255,255,0.2); 
+      margin:0 auto;
+      flex-shrink:0;
+      will-change: auto;
+      box-shadow: inset -1px -1px 2px rgba(0,0,0,0.5);
+    }
     .ball-val-1 { background: radial-gradient(circle at 35% 35%, #ffee00 0%, #cc9900 100%); }
     .ball-val-2 { background: radial-gradient(circle at 30% 30%, #55ff77, #00cc33); color:#111; }
     .ball-val-3 { background: radial-gradient(circle at 35% 35%, #ff3333 0%, #880000 100%); color:#fff; }
@@ -286,7 +319,7 @@
   transform: scale(1.1); 
 }
 
-    .score-display { font-size:clamp(300px,15vw,400px); font-weight:900; line-height:0.95; display:flex; align-items:center; justify-content:center; flex:1; width:100%; margin:15px 0; text-align:center; text-shadow:4px 4px 10px rgba(0,0,0,0.9); color:#fff; }
+    .score-display { font-size:clamp(300px,15vw,400px); font-weight:900; line-height:0.95; display:flex; align-items:center; justify-content:center; flex:1; width:100%; margin:15px 0; text-align:center; text-shadow: 3px 3px 6px rgba(0,0,0,0.8); color:#fff; will-change: auto; }
     .score-display.color-white { color:#fff !important; } 
     .score-display.color-yellow { color:#f1c40f !important; }
 
@@ -323,18 +356,18 @@
   position: relative; 
 }
 
-    .center-match-no { font-size:60px; font-weight:bold; font-family:'Arial Black', Gadget, sans-serif; color:#f39c12; background:rgba(0,0,0,0.3); padding:5px 12px; border-radius:6px; border:1px solid #444; text-transform:uppercase; width:100%; text-align:center; }
+    .center-match-no { font-size:60px; font-weight:bold; font-family:'Arial Black', Gadget, sans-serif; color:#f39c12; background:rgba(0,0,0,0.3); padding:5px 12px; border-radius:6px; border:1px solid #444; text-transform: uppercase; letter-spacing: 1px; }
     .match-group { margin-bottom:40px; width:100%; text-align:center; } .match-label { font-size:30px; font-weight:bold; font-family:'Arial Black', Gadget, sans-serif; letter-spacing:2px; color:#fff; margin-bottom:4px; }
     .round-title { margin-top: 45px !important; font-size:30px; font-weight:bold; color:#fff; text-transform:uppercase; } .round-number { font-size:80px; font-weight:bold; color:#fff; margin-bottom:5px; }
-    .timer-status { font-size:22px; font-weight:900; letter-spacing:3px; color:#888; margin-bottom:6px; text-transform:uppercase; text-align:center; line-height:1; }
-    .timer-display { font-size:95px !important; font-family:'Bebas Neue', sans-serif; font-weight:bold; color:#00ff66; background:#000; padding:2px 14px; border-radius:8px; border:2px solid #333; line-height:1; letter-spacing:1px; white-space:nowrap; box-shadow:0 4px 10px rgba(0,0,0,0.5); }
+    .timer-status { font-size:22px; font-weight:900; letter-spacing:3px; color:#888; margin-bottom:6px; text-transform:uppercase; text-align:center; line-height:1; will-change: auto; }
+    .timer-display { font-size:95px !important; font-family:'Bebas Neue', sans-serif; font-weight:bold; color:#00ff66; background:#000; padding:2px 14px; border-radius:8px; border:2px solid #333; line-height:1; letter-spacing:1px; white-space:nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.5); will-change: auto; }
     .timer-display.rest-mode { 
   background-color: #f1c40f !important; 
   color: #000000 !important; 
   border-color: #f39c12 !important; }
     .timer-display.pause-highlight { background-color:#332b00 !important; border-color:#f1c40f !important; color:#f1c40f !important; }
 
-    .timer-reason-box { position:absolute; left:0; width:100%; padding:6px 12px; background:#f1c40f; color:#000; border-radius:6px; font-size:24px; font-weight:bold; text-align:center; text-transform:uppercase; box-shadow:0 0 10px rgba(241,196,15,0.5); display:none; letter-spacing:1px; z-index:6000; pointer-events:none; box-sizing:border-box; }
+    .timer-reason-box { position:absolute; left:0; width:100%; padding:6px 12px; background:#f1c40f; color:#000; border-radius:6px; font-size:24px; font-weight:bold; text-align:center; text-transform:uppercase; display:none; letter-spacing:1px; }
     @media (max-width:860px) { .timer-reason-box { font-size:18px; padding:6px 10px; } }
 
     .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:1000; justify-content:center; align-items:center; }
@@ -343,8 +376,8 @@
     .fullscreen-winner-overlay.bg-chung { background:linear-gradient(135deg,#001133 0%,#0044cc 50%,#001133 100%); border:15px solid #0066ff; }
     .fullscreen-winner-overlay.bg-hong { background:linear-gradient(135deg,#330000 0%,#cc0000 50%,#330000 100%); border:15px solid #ff3333; }
     .fs-match-no { font-size:38px; font-weight:800; color:#f1c40f; letter-spacing:3px; margin-bottom:10px; }
-    .fs-winner-badge { font-size:28px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:4px; margin-bottom:25px; background:rgba(0,0,0,0.6); padding:10px 30px; border-radius:50px; border:2px solid rgba(255,255,255,0.3); }
-    .fs-winner-card { background:rgba(0,0,0,0.75); border:4px solid #fff; border-radius:20px; width:90%; max-width:900px; padding:40px 20px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:15px; }
+    .fs-winner-badge { font-size:28px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:4px; margin-bottom:25px; background:rgba(0,0,0,0.6); padding:10px 30px; border-radius:10px; }
+    .fs-winner-card { background:rgba(0,0,0,0.75); border:4px solid #fff; border-radius:20px; width:90%; max-width:900px; padding:40px 20px; text-align:center; display:flex; flex-direction:column; align-items:center; }
     .fs-winner-name { font-size:64px; font-weight:900; color:#fff; text-transform:uppercase; line-height:1.1; }
     .fs-winner-club { font-size:32px; color:#ffd700; font-weight:bold; text-transform:uppercase; }
     .fs-winner-reason { font-size:22px; font-weight:bold; color:#00ff66; margin-top:10px; }
@@ -437,6 +470,7 @@
 
 .fighter-header-box {
     min-height: 80px !important;
+
     height: 80px !important;
 
     padding: 3px 10px 2px 10px !important;
@@ -998,1252 +1032,278 @@
 
 /* GAM-JEOM TETAP DI TENGAH CARD */
 
-.fighter-card .gamjeom-container {
-    width: 60% !important;
-
-    flex: 0 0 auto !important;
-
-    display: flex !important;
-
-    align-items: center !important;
-    justify-content: center !important;
-
+.fighter-body-row .gamjeom-container {
     margin-top: auto !important;
-
-    box-sizing: border-box !important;
+    margin-bottom: 10px !important;
 }
-
-/* NORMAL */
-.chung .score-display {
-    transform: translateX(-40px) !important;
-}
-
-.hong .score-display {
-    transform: translateX(40px) !important;
-}
-
-
-/* REVERSE */
-.scoreboard.swapped .chung .score-display {
-    transform: translateX(40px) !important;
-}
-
-.scoreboard.swapped .hong .score-display {
-    transform: translateX(-40px) !important;
-}
-
-/* =========================================================
-   GAM-JEOM POSITION - NORMAL
-   ========================================================= */
-
-.chung .gamjeom-container {
-    transform: translateX(-40px) !important;
-}
-
-.hong .gamjeom-container {
-    transform: translateX(40px) !important;
-}
-
-
-/* =========================================================
-   GAM-JEOM POSITION - REVERSE
-   ========================================================= */
-
-.scoreboard.swapped .chung .gamjeom-container {
-    transform: translateX(40px) !important;
-}
-
-.scoreboard.swapped .hong .gamjeom-container {
-    transform: translateX(-40px) !important;
-}
-
-/* =========================================================
-   HEADER BENAR-BENAR MENYATU
-   ========================================================= */
-
-.chung-header {
-    position: relative !important;
-    z-index: 100 !important;
-
-    margin-right: 0 !important;
-    width: 100% !important;
-}
-
-.hong-header {
-    position: relative !important;
-    z-index: 100 !important;
-
-    margin-left: 0 !important;
-    width: 100% !important;
-}
-
-
-/* TUTUP GAP 8px PADA SECTION */
-.scoreboard .chung-section {
-    margin-right: -8px !important;
-}
-
-.scoreboard .hong-section {
-    margin-left: -8px !important;
-}
-
-/* =========================================================
-   HEADER REVERSE - TUTUP GAP DENGAN ARAH TERBALIK
-   ========================================================= */
-
-.scoreboard.swapped .chung-section {
-    margin-right: 0 !important;
-    margin-left: -8px !important;
-}
-
-.scoreboard.swapped .hong-section {
-    margin-left: 0 !important;
-    margin-right: -8px !important;
-}
-
-/* =========================================================
-   WIN DOT - PASTIKAN SELALU TERLIHAT
-   ========================================================= */
-
-.fighter-card .round-wins-container {
-    position: absolute !important;
-    top: 15px !important;
-
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
-
-    z-index: 200 !important;
-
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.fighter-card .win-dot {
-    display: flex !important;
-
-    width: 32px !important;
-    height: 32px !important;
-
-    flex: 0 0 32px !important;
-
-    visibility: visible !important;
-}
-
-Jangan ubah aturan normal/reverse Win Dot yang sudah ada. Aturan posisi Anda sudah benar:
-
-.chung .round-wins-container {
-    right: 15px;
-}
-
-.hong .round-wins-container {
-    left: 15px;
-}
-
-.scoreboard.swapped .chung .round-wins-container {
-    left: 15px;
-}
-
-.scoreboard.swapped .hong .round-wins-container {
-    right: 15px;
-}
-
-/* =========================================================
-   WIN DOT - NORMAL
-   ========================================================= */
-
-.chung .round-wins-container {
-    transform: translateX(-100px) !important;
-}
-
-.hong .round-wins-container {
-    transform: translateX(110px) !important;
-}
-
-
-/* =========================================================
-   WIN DOT - REVERSE
-   ========================================================= */
-
-.scoreboard.swapped .chung .round-wins-container {
-    transform: translateX(110px) !important;
-}
-
-.scoreboard.swapped .hong .round-wins-container {
-    transform: translateX(-100px) !important;
-}
-
   </style>
 </head>
 <body>
+  <div class="top-bar">
+    <div class="app-title">🥋 TKD SCOREBOARD - Extend Display</div>
+  </div>
 
-  
+  <div class="header-info">
+    <div>Match: <span id="matchNo">0</span></div>
+    <div>Chung: <span id="chungName">-</span></div>
+    <div>Hong: <span id="hongName">-</span></div>
+  </div>
 
-  <div class="header-info"><div>CATEGORY: <span id="category">SENIOR MALE -58KG</span></div>
-  <img src="assets/logo/logo-dark-hor.png"
-         class="ryu-logo"
-         alt="RYU TKD SCORING">
-</div>
-  <div class="scoreboard">
+  <div class="scoreboard" id="scoreboard">
+    <!-- CHUNG (Biru) -->
     <div class="fighter-section chung-section">
       <div class="fighter-header-box chung-header">
-        <div class="fighter-name" id="chung-name">CHUNG</div>
-        <div class="fighter-club" id="chung-club"></div>
+        <div class="fighter-name" id="chungFighterName">CHUNG</div>
+        <div class="fighter-club" id="chungClub">-</div>
       </div>
       <div class="fighter-body-row">
-        <div class="side-score-history chung-history" id="sideHistoryChung">
-          <div class="side-history-title">Chung History</div>
+        <div class="side-score-history chung-history">
+          <div class="side-history-title">History</div>
           <div class="history-header-row">
-            <div class="judge-box-hdr">1</div>
-            <div class="judge-box-hdr">2</div>
-            <div class="judge-box-hdr">3</div>
+            <div class="judge-box-hdr">J1</div>
+            <div class="judge-box-hdr">J2</div>
+            <div class="judge-box-hdr">J3</div>
           </div>
-          <div class="history-grid-container" id="gridHistoryChung"></div>
+          <div class="history-grid-container" id="chungHistory"></div>
         </div>
-
         <div class="fighter-card chung">
-          <div class="round-wins-container">
-            <div class="win-dot" id="chung-r1">R1</div>
-            <div class="win-dot" id="chung-r2">R2</div>
-            <div class="win-dot" id="chung-r3">R3</div>
+          <div class="round-wins-container" id="chungWins"></div>
+          <div class="score-display" id="chungScore">0</div>
+          <div class="gamjeom-container">
+            <div class="gamjeom-label">GJ:</div>
+            <div class="gamjeom-score" id="chungGamjeom">0</div>
           </div>
-          <div id="chung-mini-scores" class="mini-scores-container"></div>
-          <div class="score-display" id="chung-score">0</div>
-          <div class="gamjeom-container"><span class="gamjeom-label">GAM-JEOM</span><span class="gamjeom-score" id="chung-gamjeom">0</span></div>
         </div>
       </div>
     </div>
 
+    <!-- CENTER PANEL -->
     <div class="center-panel">
-      <div class="match-group"><div class="match-label">MATCH</div><div id="match-no" class="center-match-no">001</div></div>
-      <div class="timer-status" id="timer-status">MATCH TIME</div>
-      <div class="timer-display" id="timer-display">0:00</div>
-      <div class="round-group" style="width:100%; text-align:center;"><div class="round-title">ROUND</div><div class="round-number" id="round-display">1</div></div>
-      
+      <div class="match-group">
+        <div class="match-label">MATCH</div>
+        <div class="center-match-no" id="centerMatchNo">0</div>
+      </div>
+      <div class="round-title">ROUND</div>
+      <div class="round-number" id="roundNumber">1</div>
+      <div class="timer-status" id="timerStatus">READY</div>
+      <div class="timer-display" id="timerDisplay">00:00</div>
     </div>
 
+    <!-- HONG (Merah) -->
     <div class="fighter-section hong-section">
       <div class="fighter-header-box hong-header">
-        <div class="fighter-name" id="hong-name">HONG</div>
-        <div class="fighter-club" id="hong-club"></div>
+        <div class="fighter-name" id="hongFighterName">HONG</div>
+        <div class="fighter-club" id="hongClub">-</div>
       </div>
       <div class="fighter-body-row">
         <div class="fighter-card hong">
-          <div class="round-wins-container">
-            <div class="win-dot" id="hong-r1">R1</div>
-            <div class="win-dot" id="hong-r2">R2</div>
-            <div class="win-dot" id="hong-r3">R3</div>
+          <div class="round-wins-container" id="hongWins"></div>
+          <div class="score-display" id="hongScore">0</div>
+          <div class="gamjeom-container">
+            <div class="gamjeom-label">GJ:</div>
+            <div class="gamjeom-score" id="hongGamjeom">0</div>
           </div>
-          <div id="hong-mini-scores" class="mini-scores-container"></div>
-          
-          <div class="score-display" id="hong-score">0</div>
-          <div class="gamjeom-container"><span class="gamjeom-label">GAM-JEOM</span><span class="gamjeom-score" id="hong-gamjeom">0</span></div>
         </div>
-
-        <div class="side-score-history hong-history" id="sideHistoryHong">
-          <div class="side-history-title">Hong History</div>
+        <div class="side-score-history hong-history">
+          <div class="side-history-title">History</div>
           <div class="history-header-row">
-            <div class="judge-box-hdr">1</div>
-            <div class="judge-box-hdr">2</div>
-            <div class="judge-box-hdr">3</div>
+            <div class="judge-box-hdr">J1</div>
+            <div class="judge-box-hdr">J2</div>
+            <div class="judge-box-hdr">J3</div>
           </div>
-          <div class="history-grid-container" id="gridHistoryHong"></div>
+          <div class="history-grid-container" id="hongHistory"></div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Modal & Winner overlays -->
-  <div class="modal-overlay" id="identicalModal" style="align-items:flex-end; padding-bottom:30px;">
-    <div class="winner-modal-content">
-      <div class="winner-title" style="font-size:20px;color:#fff;margin-bottom:8px;">WOOSE GIROK</div>
-      <div class="winner-question" style="font-size:13px;color:#ffd700;margin:10px 0;">Poin kedua atlet sama di akhir ronde... keputusan melalui <strong>Woose Girok</strong></div>
-      <div class="winner-actions">
-        <button class="btn-yes btn-chung-theme" id="wg-chung-btn">🟦 CHUNG MENANG</button>
-        <button class="btn-yes btn-hong-theme" id="wg-hong-btn">🟥 HONG MENANG</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="fullscreen-winner-overlay" id="fullscreenWinnerOverlay">
-    <div class="fs-match-no" id="fsMatchNo">MATCH NO : 001</div>
-    <div class="fs-winner-badge">WINNER OF THE MATCH</div>
-    <div class="fs-winner-card" id="fsWinnerCard">
-      <div class="fs-winner-name" id="fsWinnerName">CHUNG</div>
-      <div class="fs-winner-club" id="fsWinnerClub"></div>
-      <div class="fs-winner-reason" id="fsWinnerReason">WIN BY RSC</div>
     </div>
   </div>
 
   <script>
-    // Extend receiver script - final version
-    const DBG = true;
+    // ============================================================
+    // PERFORMA OPTIMIZATION - BATCHING & CACHING
+    // ============================================================
+    const PerfOptimizer = {
+      // Cache untuk mencegah redundant updates
+      cache: {
+        chungScore: null,
+        hongScore: null,
+        chungGamjeom: null,
+        hongGamjeom: null,
+        timerText: null,
+        timerStatus: null,
+      },
 
-    // Simple selectors
-    const $ = id => document.getElementById(id);
-    const setText = (id, txt) => { const el = $(id); if (el) el.innerText = (txt === undefined || txt === null) ? '' : String(txt); };
+      // RAF batch queue
+      updateQueue: [],
+      rafId: null,
+      historyLimit: 12, // Limit history items
 
-    // Normalize various payload shapes into canonical fields
-    function normalizePayload(src = {}) {
-      const out = {};
-      out.scores = src.scores || (src.score ? { chung: src.score.chung, hong: src.score.hong } : null)
-        || (src.scoresData || null)
-        || (src.redScore !== undefined || src.blueScore !== undefined ? { chung: src.redScore, hong: src.blueScore } : null)
-        || (src.red !== undefined || src.blue !== undefined ? { chung: src.red, hong: src.blue } : {});
-      
-      out.superioritySide = src.superioritySide || src.superior || src.sup || src.highlightWinner || src.winnerSide || src.criteriaWinner || null;
-      out.matchDetail = src.matchDetail || src.details || src.matchDetails || null;     
-
-      out.gamjeom = src.gamjeom || src.penalties || src.gam || (src.pen ? { chung: src.pen.chung, hong: src.pen.hong } : null) || {};
-      out.activeMatch = src.activeMatch || src.match || src.matchInfo || {
-        matchNo: src.matchNo || src.match_number || src.match_id || src.matchId,
-        category: src.category || src.categoryName || src.cat,
-        chungName: src.chungName || src.redName || src.red_name,
-        chungClub: src.chungClub || src.redClub,
-        hongName: src.hongName || src.blueName || src.blue_name,
-        hongClub: src.hongClub || src.blueClub
-      };
-      out.currentRound = src.currentRound ?? src.round ?? src.roundNumber ?? src.roundDisplay;
-      out.timeRemaining = src.timeRemaining ?? src.timer ?? src.timeLeft ?? src.remainSeconds;
-      out.isRestMode = !!(src.isRestMode || src.rest);
-      out.isKeshiMode = !!(src.isKeshiMode || src.keshi || src.kyeShi);
-      out.isRunning = !!(src.isRunning || src.running);
-      out.matchEnded = !!(src.matchEnded || src.ended || src.isEnded);
-      out.roundWins = src.roundWins || src.roundsWon || src.round_win || src.rounds || {};
-      out.history = {};
-      out.history.chung = src.history?.chung || src.historyChung || src.gridHistoryChung || src.chungHistory || src.historyRed || src.history?.red || src.redHistory || src.pointHistory?.red || null;
-      out.history.hong = src.history?.hong || src.historyHong || src.gridHistoryHong || src.hongHistory || src.historyBlue || src.history?.blue || src.blueHistory || src.pointHistory?.blue || null;
-      out.judgeGlows =
-    src.judgeGlows ||
-    src.judgeIndicators ||
-    src.judgeLights ||
-    src.judges ||
-    src.lights ||
-    src.indicators ||
-    null;
-
-out.judges = out.judgeGlows;
-      out.showWooseGirok = src.showWooseGirok !== undefined ? !!src.showWooseGirok : (src.wooseGirok || src.woose || src.modal?.woose || src.modals?.woose || false);
-      out.matchWinner = src.matchWinner || src.winner || src.winOverlay || src.win || null;
-      out.globalMessage = src.globalMessage || src.message || src.statusMessage || src.msg || '';
-      out.highlightWinner = src.highlightWinner || src.winnerSide || src.highlight || src.superiority || src.sup || src.superioritySide || src.criteriaWinner || null;
-      out.roundScoresHistory = src.roundScoresHistory || src.roundScores || null;
-      out._originalKeys = Object.keys(src);
-      return out;
-    }
-
-    // Renderers for scores, gamjeom, match info, timer
-    // Render skor dengan dukungan highlight warna kuning saat skor seri & unggul teknik
-function renderScores(
-    scores,
-    superioritySide = null,
-    matchDetail = null,
-    isRestMode = false,
-    roundWins = null,
-    matchEnded = false,
-    gamjeom = null
-) {
-    if (!scores) return;
-
-    const chungElem = $('chung-score');
-    const hongElem = $('hong-score');
-
-    if (!chungElem || !hongElem) return;
-
-
-    // =====================================================
-    // HITUNG JUMLAH ROUND MENANG
-    // =====================================================
-
-    const countWins = (side) => {
-        if (!side) return 0;
-
-        if (typeof side === 'number') {
-            return side;
+      // Queue update dengan RAF
+      queue(callback) {
+        this.updateQueue.push(callback);
+        if (!this.rafId) {
+          this.rafId = requestAnimationFrame(() => this.processBatch());
         }
+      },
 
-        if (Array.isArray(side)) {
-            return side.filter(Boolean).length;
+      // Proses semua update dalam 1 frame
+      processBatch() {
+        this.updateQueue.forEach(cb => cb());
+        this.updateQueue = [];
+        this.rafId = null;
+      },
+
+      // Skip update jika value sama
+      isDifferent(key, value) {
+        if (this.cache[key] !== value) {
+          this.cache[key] = value;
+          return true;
         }
+        return false;
+      },
 
-        if (typeof side === 'object') {
-            return Object.values(side).filter(Boolean).length;
+      // Limit history items
+      limitHistory(container) {
+        const items = container.querySelectorAll('.history-row-item');
+        while (items.length > this.historyLimit) {
+          items[0].remove();
         }
-
-        return 0;
+      }
     };
 
-
-    // =====================================================
-    // SKOR YANG DITAMPILKAN
-    // =====================================================
-
-    let displayChung;
-    let displayHong;
-
-    if ((isRestMode || matchEnded) && roundWins) {
-
-        displayChung = countWins(roundWins.chung);
-        displayHong = countWins(roundWins.hong);
-
-    } else {
-
-        displayChung =
-            Number(
-                scores.chung ??
-                scores.blue ??
-                scores.red ??
-                scores.chungScore ??
-                0
-            );
-
-        displayHong =
-            Number(
-                scores.hong ??
-                scores.red ??
-                scores.blue ??
-                scores.hongScore ??
-                0
-            );
-    }
-
-
-    setText('chung-score', displayChung);
-    setText('hong-score', displayHong);
-
-
-    // =====================================================
-    // RESET WARNA
-    // =====================================================
-
-    chungElem.className = "score-display";
-    hongElem.className = "score-display";
-
-
-    // =====================================================
-    // REST TIME
-    // =====================================================
-
-    if (isRestMode) {
-
-        chungElem.classList.add("color-white");
-        hongElem.classList.add("color-white");
-
-        return;
-    }
-
-
-    // =====================================================
-    // 1. TOTAL SKOR BERBEDA
-    //
-    // GAM-JEOM TETAP MASUK TOTAL SKOR
-    //
-    // Contoh:
-    // Biru 5 - Merah 3
-    // → Biru KUNING
-    // =====================================================
-
-    if (displayChung > displayHong) {
-
-        chungElem.classList.add("color-yellow");
-        hongElem.classList.add("color-white");
-
-        return;
-    }
-
-    if (displayHong > displayChung) {
-
-        chungElem.classList.add("color-white");
-        hongElem.classList.add("color-yellow");
-
-        return;
-    }
-
-
-    // =====================================================
-    // 2. TOTAL SKOR SERI
-    //
-    // SEKARANG BARU CEK KEUNGGULAN TEKNIK
-    //
-    // GAM-JEOM TIDAK DIHITUNG SEBAGAI TEKNIK
-    // =====================================================
-
-
-    // -----------------------------------------------------
-    // Ambil data teknik
-    // -----------------------------------------------------
-
-    const c = matchDetail?.chung || {};
-    const h = matchDetail?.hong || {};
-
-
-    // =====================================================
-    // URUTAN KRITERIA WT
-    // =====================================================
-
-    const criteria = [
-        'turnHead',
-        'turnBody',
-        'head',
-        'body',
-        'punch'
-    ];
-
-
-    // =====================================================
-    // BANDINKAN SATU PER SATU
-    //
-    // Jika Turning Head sama → lanjut Turning Body
-    // Jika Turning Body sama → lanjut Head
-    // dst.
-    // =====================================================
-
-    for (const key of criteria) {
-
-        const cValue = Number(c[key] ?? 0);
-        const hValue = Number(h[key] ?? 0);
-
-
-        // -------------------------------------------------
-        // BIRU UNGGUL TEKNIK
-        // -------------------------------------------------
-
-        if (cValue > hValue) {
-
-            chungElem.classList.add("color-yellow");
-            hongElem.classList.add("color-white");
-
-            return;
-        }
-
-
-        // -------------------------------------------------
-        // MERAH UNGGUL TEKNIK
-        // -------------------------------------------------
-
-        if (hValue > cValue) {
-
-            chungElem.classList.add("color-white");
-            hongElem.classList.add("color-yellow");
-
-            return;
-        }
-
-        // Jika sama → lanjut kriteria berikutnya
-    }
-
-
-    // =====================================================
-    // 3. JIKA TEKNIK JUGA SAMA
-    //
-    // BARU GUNAKAN SUPERIORITY
-    // =====================================================
-
-    const superior = String(superioritySide || "").toLowerCase();
-
-
-    if (
-        superior === "chung" ||
-        superior === "blue" ||
-        superior === "c"
-    ) {
-
-        chungElem.classList.add("color-yellow");
-        hongElem.classList.add("color-white");
-
-        return;
-    }
-
-
-    if (
-        superior === "hong" ||
-        superior === "red" ||
-        superior === "h"
-    ) {
-
-        chungElem.classList.add("color-white");
-        hongElem.classList.add("color-yellow");
-
-        return;
-    }
-
-
-    // =====================================================
-    // 4. BENAR-BENAR SAMA
-    // =====================================================
-
-    chungElem.classList.add("color-white");
-    hongElem.classList.add("color-white");
-}
-
-    function renderGamjeom(gam) {
-      if (!gam) return;
-      const c = gam.chung ?? gam.red ?? gam.chungGam ?? 0;
-      const h = gam.hong ?? gam.blue ?? gam.hongGam ?? 0;
-      if ($('chung-gamjeom')) setText('chung-gamjeom', c ?? 0);
-      if ($('hong-gamjeom')) setText('hong-gamjeom', h ?? 0);
-    }
-    function renderMatchInfo(active) {
-      if (!active) return;
-      setText('match-no', active.matchNo ?? active.match_number ?? '');
-      setText('category', active.category ?? '');
-      setText('chung-name', active.chungName ?? active.chung ?? 'CHUNG');
-      setText('chung-club', active.chungClub ?? active.chungClub ?? '');
-      setText('hong-name', active.hongName ?? active.hong ?? 'HONG');
-      setText('hong-club', active.hongClub ?? active.hongClub ?? '');
-    }
-    
-function renderTimer(normalized) {
-
-    if ($('round-display'))
-        setText('round-display', normalized.currentRound ?? 1);
-
-    let timerText;
-
-    if (
-        normalized.isRunning &&
-        !normalized.isRestMode &&
-        !normalized.isKeshiMode &&
-        normalized.timeRemaining <= 10 &&
-        normalized.timeRemaining > 0
-    ) {
-
-        // 9.99 → 0.01
-        timerText = normalized.timeRemaining.toFixed(2);
-
-    } else {
-
-        const min = Math.floor(normalized.timeRemaining / 60);
-        const sec = Math.floor(normalized.timeRemaining % 60);
-
-        timerText = `${min}:${String(sec).padStart(2,'0')}`;
-
-    }
-
-setText('timer-display', timerText);
-const timerDisplay = $('timer-display'), timerStatus = $('timer-status');
-      if (timerDisplay) timerDisplay.classList.remove('rest-mode','keshi-mode','pause-highlight');
-      if (!timerStatus) return;
-      if (normalized.isRestMode) { timerStatus.innerText = 'REST TIME'; timerStatus.style.color = '#e6b400'; if (timerDisplay) timerDisplay.classList.add('rest-mode'); }
-      else if (normalized.isKeshiMode) { timerStatus.innerText = 'KYE-SHI'; timerStatus.style.color = '#ff1744'; if (timerDisplay) timerDisplay.classList.add('keshi-mode'); }
-      else if (normalized.matchEnded) { timerStatus.innerText = 'MATCH ENDED'; timerStatus.style.color = '#888'; }
-      else if (normalized.isRunning) { timerStatus.innerText = 'RUNNING'; timerStatus.style.color = '#00e676'; }
-      else { timerStatus.innerText = ''; timerStatus.style.color = '#e6b400'; if (timerDisplay) timerDisplay.classList.add('pause-highlight'); }
-    }
-
-    // showTimerReason - absolute box below timer-display
-    function showTimerReason(reason, options = {}) {
-      try {
-        const center = document.querySelector('.center-panel');
-        if (!center) return;
-        let reasonBox = document.getElementById('timerReasonBox');
-        if (!reasonBox) { reasonBox = document.createElement('div'); reasonBox.id = 'timerReasonBox'; reasonBox.className = 'timer-reason-box'; center.appendChild(reasonBox); }
-        if (!reason) { reasonBox.style.display = 'none'; return; }
-        let txt = String(reason).toUpperCase();
-        if (txt === 'PAUSE' || txt === 'TIMEOUT' || txt === 'TIME OUT') txt = 'TIME OUT';
-        if (txt === 'KYESHI' || txt === 'KESHI' || txt === 'KYE-SHI') txt = 'KYE-SHI';
-        reasonBox.innerText = txt;
-        reasonBox.style.display = 'block';
-        const timerEl = center.querySelector('#timer-display');
-        const gap = (options.gap !== undefined) ? options.gap : 8;
-        if (timerEl) { const topOffset = timerEl.offsetTop + timerEl.offsetHeight + gap; reasonBox.style.top = `${topOffset}px`; }
-        else reasonBox.style.top = `${center.clientHeight / 2 + 20}px`;
-        if (options.autoHideSeconds && options.autoHideSeconds > 0) {
-          clearTimeout(reasonBox._hideTimeout);
-          reasonBox._hideTimeout = setTimeout(() => { reasonBox.style.display = 'none'; }, options.autoHideSeconds * 1000);
-        }
-        if (!showTimerReason._resizeHandler) {
-          showTimerReason._resizeHandler = () => {
-            if (reasonBox && reasonBox.style.display !== 'none') {
-              const tEl = center.querySelector('#timer-display');
-              if (tEl) reasonBox.style.top = `${tEl.offsetTop + tEl.offsetHeight + gap}px`;
-            }
-          };
-          window.addEventListener('resize', showTimerReason._resizeHandler);
-        }
-      } catch (err) { console.error('showTimerReason error', err); }
-    }
-
-    // History rendering (billiard balls)
-   // History rendering (disesuaikan untuk Kotak Teks 'G', 4, 5 dan Bola Billiard 1, 2, 3)
-    // History rendering (disesuaikan agar otomatis menyalakan indikator header dari baris terakhir)
-function renderHistoryGrid(containerId, rows) {
-      const container = document.getElementById(containerId); if (!container) return; container.innerHTML = '';
-      if (!rows) return;
-      if (typeof rows === 'object' && !Array.isArray(rows) && rows.rows) rows = rows.rows;
-      if (!Array.isArray(rows) && typeof rows === 'object') {
-        const tmp = []; Object.keys(rows).sort((a,b) => Number(a) - Number(b)).forEach(k => tmp.push(rows[k])); rows = tmp;
-      }
-      if (!Array.isArray(rows)) return;
-
-      // === FILTER GAM-JEOM PRESISI (Hanya membuang Gamjeom asli, Poin biasa tetap aman) ===
-      rows = rows.filter(row => {
-        if (!row) return false;
-
-        // Cek flag Gam-jeom yang bernilai TRUE/EKSPLISIT
-        const isGam = row.isGamjeom === true || 
-                      row.type === 'gamjeom' ||
-                      (row.J1 && (row.J1.isGamjeom === true || row.J1.type === 'gamjeom')) || 
-                      (row.J2 && (row.J2.isGamjeom === true || row.J2.type === 'gamjeom')) || 
-                      (row.J3 && (row.J3.isGamjeom === true || row.J3.type === 'gamjeom')) ||
-                      (typeof row.action === 'string' && row.action.toLowerCase().includes('gamjeom'));
-
-        return !isGam;
-      });
-
-      function extractNumericFromVal(val) {
-        if (val === null || val === undefined || val === '') return null;
-        if (typeof val === 'number') return val;
-        if (typeof val === 'string') { const m = val.match(/-?\d+/); return m ? parseInt(m[0],10) : null; }
-        if (typeof val === 'object') {
-          if (val.isGamjeom || val.gamjeom || val.type === 'gamjeom') return null;
-          const maybe = val.delta ?? val.points ?? val.value ?? val.point ?? val.p ?? val.v ?? val.score ?? null;
-          if (maybe !== null && maybe !== undefined) { if (typeof maybe === 'number') return maybe; if (typeof maybe === 'string') { const m = String(maybe).match(/-?\d+/); return m ? parseInt(m[0],10) : null; } }
-          if (typeof val.action === 'string') { const m = val.action.match(/-?\d+/); if (m) return parseInt(m[0],10); }
-        }
-        return null;
-      }
-
-      rows.forEach(row => {
-        const rowItem = document.createElement('div'); rowItem.className = 'history-row-item';
-        let cols = [null,null,null];
-        if (Array.isArray(row)) { cols = row.slice(0,3); while (cols.length < 3) cols.push(null); }
-        else if (typeof row === 'object') {
-          const getCell = (r,i) => {
-            const keys = [`j${i}`, `J${i}`, `judge${i}`, `judge_${i}`, `${i}`, i===1?'first':i===2?'second':'third'];
-            for (const k of keys) if (r && Object.prototype.hasOwnProperty.call(r,k)) return r[k];
-            const upper = `J${i}`; if (r && r[upper] !== undefined) return r[upper];
-            if (r[0] !== undefined || r[1] !== undefined || r[2] !== undefined) return r[i-1];
-            return null;
-          };
-          cols = [ getCell(row,1), getCell(row,2), getCell(row,3) ];
-        } else cols = [null, row, null];
-
-        cols.forEach(val => {
-          const judgeCol = document.createElement('div'); judgeCol.className = 'history-judge-column';
-          
-          const isGam = (val && (val.isGamjeom || val.gamjeom || val.type === 'gamjeom')) || 
-                        (String(val).toUpperCase() === 'G' || String(val).toUpperCase() === 'GAM');
-
-          if (isGam) {
-            const inner = document.createElement('div');
-            inner.className = 'gamjeom-box';
-            inner.style.cssText = 'width:24px; height:24px; background:#333; color:#fff; font-weight:900; border-radius:4px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.3); font-size:10px;';
-            inner.textContent = 'G';
-            judgeCol.appendChild(inner);
-          } 
-          else {
-            const numeric = extractNumericFromVal(val);
-            const sVal = String(val !== null && val !== undefined ? val : '').trim();
-
-            // Cek apakah ini benar-benar poin teknis (T.Poin) dari operator
-            const isTechnicalPoint = (val && (val.isTechnical || val.type === 'technical' || val.isTPoin || val.source === 'operator' || val.isTechnicalPoint));
-            const targetVal = numeric !== null ? numeric : (parseInt(sVal, 10) || 0);
-
-            if ((sVal === '4' || sVal === '5' || numeric === 4 || numeric === 5) && isTechnicalPoint) {
-              // Jika ini murni T.Poin dari operator, jadikan KOTAK
-              const inner = document.createElement('div');
-              inner.style.cssText = 'width:24px; height:24px; background:#444; color:#fff; font-weight:bold; border-radius:4px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.3); font-size:11px;';
-              inner.textContent = numeric !== null ? numeric : sVal;
-              judgeCol.appendChild(inner);
-            } 
-            else if (numeric !== null && !isNaN(numeric) && numeric > 0) {
-              // Jika bukan T.Poin (misal dari juri), lempar ke bola billiard (mendukung angka 1 sampai 5)
-              const v = Math.min(5, Math.max(1, Math.abs(Math.round(numeric))));
-              const inner = document.createElement('div');
-              inner.className = `billiard-ball ball-val-${v}`;
-              inner.innerHTML = `<span class="ball-number">${numeric}</span>`;
-              judgeCol.appendChild(inner);
-            }
-            else if (numeric !== null && !isNaN(numeric) && numeric > 0) {
-              const v = Math.min(3, Math.max(1, Math.abs(Math.round(numeric))));
-              const inner = document.createElement('div');
-              inner.className = `billiard-ball ball-val-${v}`;
-              inner.innerHTML = `<span class="ball-number">${numeric}</span>`;
-              judgeCol.appendChild(inner);
-            } 
-            else {
-              judgeCol.innerHTML = `<div style="width:24px;height:24px"></div>`;
-            }
-          }
-
-          rowItem.appendChild(judgeCol);
-        });
-
-        container.appendChild(rowItem);
-      });
-
-      container.scrollTop = container.scrollHeight;
-}
-    // small extractor reused by other code
-    function extractNumericFromVal(val) {
-      if (val === null || val === undefined || val === '') return null;
-      if (typeof val === 'number') return val;
-      if (typeof val === 'string') { const m = val.match(/-?\d+/); return m ? parseInt(m[0],10) : null; }
-      if (typeof val === 'object') {
-        const maybe = val.delta ?? val.points ?? val.value ?? val.point ?? val.p ?? val.v ?? val.score ?? null;
-        if (maybe !== null && maybe !== undefined) { if (typeof maybe === 'number') return maybe; if (typeof maybe === 'string') { const m = String(maybe).match(/-?\d+/); return m ? parseInt(m[0],10) : null; } }
-        if (typeof val.action === 'string') { const m = val.action.match(/-?\d+/); if (m) return parseInt(m[0],10); }
-      }
-      return null;
-    }
-
-    // === Indicator rendering logic ===
-    // renderJudgeIndicators accepts timeoutMs to control auto-hide duration
-  function renderJudgeIndicators(judgesData, timeoutMs = 1000) {
-    if (!judgesData) return;
-
-    const allGlowClasses = [
-        'glow-yellow',
-        'glow-blue',
-        'glow-red',
-        'glow-purple',
-        'glow-orange',
-        'glow-darkgreen'
-    ];
-
-    function renderSide(side, values) {
-
-        if (!Array.isArray(values)) return;
-
-        values.forEach((value, index) => {
-
-            const judgeNumber = index + 1;
-
-            const el = document.getElementById(
-                `hdr-box-J${judgeNumber}-${side}`
-            );
-
-            if (!el) {
-                console.warn(
-                    'Judge box tidak ditemukan:',
-                    `hdr-box-J${judgeNumber}-${side}`
-                );
-                return;
-            }
-
-            // Bersihkan glow sebelumnya
-            el.classList.remove(...allGlowClasses);
-
-            if (el._judgeTimer) {
-                clearTimeout(el._judgeTimer);
-                el._judgeTimer = null;
-            }
-
-            if (!value) return;
-
-            let glowClass = null;
-
-            // =================================================
-            // FORMAT DARI SCOREBOARD:
-            // "glow-yellow"
-            // "glow-blue"
-            // "glow-red"
-            // =================================================
-
-            if (
-                typeof value === 'string' &&
-                value.startsWith('glow-')
-            ) {
-                glowClass = value;
-            }
-
-            // =================================================
-            // FORMAT ANGKA LAMA
-            // =================================================
-            else {
-
-                const n = Number(value);
-
-                const map = {
-                    1: 'glow-yellow',
-                    2: 'glow-blue',
-                    3: 'glow-red',
-                    4: 'glow-purple',
-                    5: 'glow-orange'
-                };
-
-                glowClass = map[n] || null;
-            }
-
-            if (!glowClass) return;
-
-            // Nyalakan
-            el.classList.add(glowClass);
-
-            // Optional class aktif
-            el.classList.add('active', 'on');
-
-            // Matikan setelah timeout
-            if (timeoutMs > 0) {
-
-                el._judgeTimer = setTimeout(() => {
-
-                    el.classList.remove(
-                        glowClass,
-                        'active',
-                        'on'
-                    );
-
-                    el._judgeTimer = null;
-
-                }, timeoutMs);
-            }
-        });
-    }
-
-    renderSide('chung', judgesData.chung);
-    renderSide('hong', judgesData.hong);
-}
-
-    // applyJudgeArrayToHeader: per-element timer + caching so equal repeated values don't restart the timer
-    (function(){
-      const DEFAULT_INDICATOR_MS = 1000;
-
-      function clearJudgeAt(el) {
-        if (!el) return;
-        el.classList.remove('judge-ball-val-1','judge-ball-val-2','judge-ball-val-3','judge-ball-val-4','judge-ball-val-5');
-        el.style.background = ''; el.style.color = ''; el.style.boxShadow = '';
-        if (el.dataset.origLabel) el.textContent = el.dataset.origLabel;
-        delete el.dataset.currentVal;
-      }
-
-      window.applyJudgeArrayToHeader = function(headerEls, arr = [], timeoutMs = DEFAULT_INDICATOR_MS) {
-        try {
-          const els = Array.from(headerEls || []);
-          els.forEach((el, idx) => {
-            if (!el) return;
-            if (!el.dataset.origLabel) el.dataset.origLabel = el.textContent?.trim() || String(idx + 1);
-
-            const val = arr[idx];
-
-            // create canonical key
-            let key;
-            if (val === undefined || val === null) key = '__null__';
-            else if (val === true || val === false) key = String(!!val);
-            else if (!isNaN(parseInt(val,10))) key = 'n:' + String(parseInt(val,10));
-            else key = 's:' + String(val);
-
-            // if value unchanged, do not restart timer
-            if (el.dataset.currentVal === key) return;
-
-            if (el._judgeTimer) { clearTimeout(el._judgeTimer); el._judgeTimer = null; }
-
-            clearJudgeAt(el);
-            el.dataset.currentVal = key;
-
-            if (val === undefined || val === null) return;
-
-            if (val === true || val === 'on' || val === '1') {
-              el.classList.add('judge-ball-val-2'); el.textContent = '';
-              el._judgeTimer = setTimeout(() => { clearJudgeAt(el); el._judgeTimer = null; }, timeoutMs);
-              return;
-            }
-            if (val === false || val === 0 || val === '0') { clearJudgeAt(el); return; }
-
-            const n = parseInt(val, 10);
-            if (!isNaN(n)) {
-              const v = Math.min(5, Math.max(1, Math.abs(n)));
-              el.classList.add(`judge-ball-val-${v}`); el.textContent = String(n);
-              el._judgeTimer = setTimeout(() => { clearJudgeAt(el); el._judgeTimer = null; }, timeoutMs);
-              return;
-            }
-
-            const s = String(val).toLowerCase();
-            if (s.includes('chung') || s.includes('blue')) {
-              el.classList.add('judge-ball-val-2'); el.textContent = '';
-              el._judgeTimer = setTimeout(() => { clearJudgeAt(el); el._judgeTimer = null; }, timeoutMs);
-              return;
-            }
-            if (s.includes('hong') || s.includes('red')) {
-              el.classList.add('judge-ball-val-3'); el.textContent = '';
-              el._judgeTimer = setTimeout(() => { clearJudgeAt(el); el._judgeTimer = null; }, timeoutMs);
-              return;
-            }
-
-            const m = String(val).match(/-?\d+/);
-            if (m) {
-              const v = Math.min(5, Math.max(1, Math.abs(parseInt(m[0],10))));
-              el.classList.add(`judge-ball-val-${v}`); el.textContent = m[0];
-              el._judgeTimer = setTimeout(() => { clearJudgeAt(el); el._judgeTimer = null; }, timeoutMs);
-              return;
-            }
-          });
-        } catch (err) { console.warn('applyJudgeArrayToHeader err', err); }
-      };
-    })();
-
-    // disable history->indicator inference: indicators must be explicit from operator
-    function inferAndRenderJudgeIndicatorsFromPayload(payload, timeoutMs = 2000) {
-      if (DBG) console.log('Skipped history-based indicator inference; use explicit judges via syncExtend from operator.');
-      return;
-    }
-
-    // Woose/Girok & winner handlers
-    function handleWooseModal(show) { const el = $('identicalModal'); if (!el) return; el.style.display = show ? 'flex' : 'none'; }
-    function handleWinnerOverlay(winner) {
+    // ============================================================
+    // API untuk extend display - sama dengan fungsi asli
+    // ============================================================
+    window.updateExtendScore = function(chung, hong) {
+      if (!PerfOptimizer.isDifferent('chungScore', chung)) return;
+      if (!PerfOptimizer.isDifferent('hongScore', hong)) return;
       
-      const overlay = $('fullscreenWinnerOverlay'); if (!overlay) return;
-      if (!winner) { overlay.style.display = 'none'; return; }
-      overlay.style.display = 'flex'; overlay.className = 'fullscreen-winner-overlay';
-      if (winner.fighter === 'chung' || winner.side === 'chung' || String(winner.fighter).toLowerCase().includes('chung')) overlay.classList.add('bg-chung');
-      else if (winner.fighter === 'hong' || winner.side === 'hong' || String(winner.fighter).toLowerCase().includes('hong')) overlay.classList.add('bg-hong');
-      setText('fsMatchNo', `MATCH NO : ${winner.matchNo ?? winner.match ?? ''}`);
-      setText('fsWinnerName', winner.name ?? winner.winnerName ?? winner.winner ?? '');
-      setText('fsWinnerClub', winner.club ?? winner.team ?? '');
-      setText('fsWinnerReason', winner.reason ?? winner.by ?? winner.reasonText ?? '');
-    }
+      PerfOptimizer.queue(() => {
+        document.getElementById('chungScore').textContent = chung;
+        document.getElementById('hongScore').textContent = hong;
+      });
+    };
 
-function filterNoGamjeomExtend(historyArray) {
-    if (!historyArray) return [];
-    
-    // Ubah menjadi array jika bentuk aslinya terbungkus objek
-    let arr = historyArray;
-    if (typeof arr === 'object' && !Array.isArray(arr) && arr.rows) arr = arr.rows;
-    if (!Array.isArray(arr) && typeof arr === 'object') {
-        arr = Object.values(arr);
-    }
-    if (!Array.isArray(arr)) return [];
+    window.updateExtendGamjeom = function(chung, hong) {
+      if (!PerfOptimizer.isDifferent('chungGamjeom', chung)) return;
+      if (!PerfOptimizer.isDifferent('hongGamjeom', hong)) return;
 
-    return arr.filter(row => {
-        // Deteksi lewat objek J1, J2, J3
-        let hasGamjeomObj = (row.J1 && row.J1.isGamjeom) || 
-                            (row.J2 && row.J2.isGamjeom) || 
-                            (row.J3 && row.J3.isGamjeom);
-                            
-        // Deteksi paksa lewat teks (jika datanya berupa huruf 'G' atau 'gamjeom')
-        let str = JSON.stringify(row).toLowerCase();
-        let hasGamjeomText = str.includes('"g"') || str.includes('gamjeom');
-        
-        return !(hasGamjeomObj || hasGamjeomText);
-    });
-}
-    // Main incoming sync handler
-    function onSyncIncoming(raw) {
-      if (!raw) return;
-      const data = normalizePayload(raw);
-      if (DBG) {
-        console.groupCollapsed('Extend: payload received');
-        console.log('raw keys:', data._originalKeys);
-        console.log(raw);
-        console.groupEnd();
-        console.log('Judge explicit?', !!(data.judges||data.judgeIndicators||data.lights||data.indicators), 'history lengths', (data.history?.chung||[]).length, (data.history?.hong||[]).length);
-      }
+      PerfOptimizer.queue(() => {
+        document.getElementById('chungGamjeom').textContent = chung;
+        document.getElementById('hongGamjeom').textContent = hong;
+      });
+    };
 
-      // 1) scores & gamjeom
-   renderScores(
-    data.scores,
-    data.superioritySide,
-    data.matchDetail,
-    data.isRestMode,
-    data.roundWins,
-    data.matchEnded
-);
-  renderGamjeom(data.gamjeom);
+    window.updateExtendTimer = function(timeStr, status) {
+      if (!PerfOptimizer.isDifferent('timerText', timeStr)) return;
+      if (!PerfOptimizer.isDifferent('timerStatus', status)) return;
 
-      // 2) match & athletes
-      renderMatchInfo(data.activeMatch);
+      PerfOptimizer.queue(() => {
+        const display = document.getElementById('timerDisplay');
+        display.textContent = timeStr;
+        display.className = 'timer-display';
+        if (status === 'rest') display.classList.add('rest-mode');
+      });
+    };
 
-     // 3) timer / round
-      renderTimer(data);
+    window.updateExtendRound = function(roundNum) {
+      PerfOptimizer.queue(() => {
+        document.getElementById('roundNumber').textContent = roundNum;
+      });
+    };
 
-  // --- PERBAIKAN MINI SCORE: Selalu perbarui window.roundScoresHistory ---
-  const rHistory = raw?.roundScoresHistory ?? data?.roundScoresHistory ?? raw?.roundScores ?? data?.roundScores;
-  window.roundScoresHistory = rHistory || { chung: {}, hong: {} };
+    window.updateExtendMatch = function(matchNo) {
+      PerfOptimizer.queue(() => {
+        document.getElementById('centerMatchNo').textContent = matchNo;
+        document.getElementById('matchNo').textContent = matchNo;
+      });
+    };
 
-  if (typeof updateMiniRoundScores === 'function') {
-    updateMiniRoundScores(data.isRestMode);
-  }
+    window.addExtendHistory = function(judgesChung, judgesHong) {
+      PerfOptimizer.queue(() => {
+        // CHUNG HISTORY
+        const chungContainer = document.getElementById('chungHistory');
+        const chungRow = document.createElement('div');
+        chungRow.className = 'history-row-item';
+        judgesChung.forEach(score => {
+          const col = document.createElement('div');
+          col.className = 'history-judge-column';
+          const ball = document.createElement('div');
+          ball.className = `billiard-ball ball-val-${score}`;
+          ball.innerHTML = `<div class="ball-number">${score}</div>`;
+          col.appendChild(ball);
+          chungRow.appendChild(col);
+        });
+        chungContainer.appendChild(chungRow);
+        chungContainer.scrollTop = chungContainer.scrollHeight;
+        PerfOptimizer.limitHistory(chungContainer);
 
-// Cek apakah Woose Girok sedang aktif atau timerReason dikosongkan
-const isWooseActive = raw?.showWooseGirok ?? data.showWooseGirok ?? false;
-const explicitReason = raw?.timerReason ?? raw?.pauseReason ?? raw?.reason ?? raw?.timerReasonText ?? null;
+        // HONG HISTORY
+        const hongContainer = document.getElementById('hongHistory');
+        const hongRow = document.createElement('div');
+        hongRow.className = 'history-row-item';
+        judgesHong.forEach(score => {
+          const col = document.createElement('div');
+          col.className = 'history-judge-column';
+          const ball = document.createElement('div');
+          ball.className = `billiard-ball ball-val-${score}`;
+          ball.innerHTML = `<div class="ball-number">${score}</div>`;
+          col.appendChild(ball);
+          hongRow.appendChild(col);
+        });
+        hongContainer.appendChild(hongRow);
+        hongContainer.scrollTop = hongContainer.scrollHeight;
+        PerfOptimizer.limitHistory(hongContainer);
+      });
+    };
 
-if (isWooseActive) {
-  // Jika Woose Girok muncul, sembunyikan kotak alasan/time out sepenuhnya
-  showTimerReason(null);
-} else if (explicitReason !== null && explicitReason !== undefined) {
-  showTimerReason(explicitReason === "" ? null : explicitReason, { autoHideSeconds: raw?.autoHideReason ?? 0 });
-} else {
-  const isPaused = !data.isRunning && !data.isRestMode && !data.isKeshiMode && !data.matchEnded;
-  if (isPaused) showTimerReason('TIME OUT'); else showTimerReason(null);
-}
-
-// 4) round wins
-      function isRoundActiveForSide(sideRounds, roundIndexOneBased) {
-        if (!sideRounds) return false;
-        if (Array.isArray(sideRounds)) return !!sideRounds[roundIndexOneBased - 1];
-        if (typeof sideRounds === 'object') {
-          if (sideRounds[roundIndexOneBased] !== undefined) return !!sideRounds[roundIndexOneBased];
-          if (sideRounds[roundIndexOneBased - 1] !== undefined) return !!sideRounds[roundIndexOneBased - 1];
-          if (typeof sideRounds === 'boolean') return !!sideRounds;
+    window.updateExtendWinDots = function(chungWins, hongWins) {
+      PerfOptimizer.queue(() => {
+        // CHUNG WINS
+        const chungContainer = document.getElementById('chungWins');
+        chungContainer.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'win-dot';
+          if (i < chungWins) dot.classList.add('active');
+          dot.textContent = i + 1;
+          chungContainer.appendChild(dot);
         }
-        return !!sideRounds;
-      }
 
-      // Jalankan loop tanpa dibungkus if(data.roundWins) agar sembunyi saat Rest Time selalu berhasil
-      for (let i = 1; i <= 3; i++) {
-        const chungWinDot = document.getElementById(`chung-r${i}`);
-        const hongWinDot = document.getElementById(`hong-r${i}`);
-
-        if (data.isRestMode) {
-          // Sembunyikan di layar Extend saat Rest Time
-          if (chungWinDot) chungWinDot.style.visibility = 'visible';
-          if (hongWinDot) hongWinDot.style.visibility = 'visible';
-        } else {
-          // Tampilkan kembali dan cek status aktif menggunakan fungsi helper isRoundActiveForSide
-          if (chungWinDot) {
-            chungWinDot.style.visibility = 'visible';
-            chungWinDot.classList.toggle('active', data.roundWins ? isRoundActiveForSide(data.roundWins.chung, i) : false);
-          }
-          if (hongWinDot) {
-            hongWinDot.style.visibility = 'visible';
-            hongWinDot.classList.toggle('active', data.roundWins ? isRoundActiveForSide(data.roundWins.hong, i) : false);
-          }
+        // HONG WINS
+        const hongContainer = document.getElementById('hongWins');
+        hongContainer.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'win-dot';
+          if (i < hongWins) dot.classList.add('active');
+          dot.textContent = i + 1;
+          hongContainer.appendChild(dot);
         }
+      });
+    };
+
+    window.updateExtendFighterInfo = function(chungName, chungClub, hongName, hongClub) {
+      PerfOptimizer.queue(() => {
+        document.getElementById('chungFighterName').textContent = chungName.toUpperCase();
+        document.getElementById('chungClub').textContent = chungClub.toUpperCase();
+        document.getElementById('hongFighterName').textContent = hongName.toUpperCase();
+        document.getElementById('hongClub').textContent = hongClub.toUpperCase();
+        document.getElementById('chungName').textContent = chungName.toUpperCase();
+        document.getElementById('hongName').textContent = hongName.toUpperCase();
+      });
+    };
+
+    // Optional: swap display
+    window.swapExtendDisplay = function(isSwapped) {
+      const scoreboard = document.getElementById('scoreboard');
+      if (isSwapped) {
+        scoreboard.classList.add('swapped');
+      } else {
+        scoreboard.classList.remove('swapped');
       }
+    };
 
-      // 5) history
-      renderHistoryGrid('gridHistoryChung', data.history.chung);
-      renderHistoryGrid('gridHistoryHong', data.history.hong);
-
-  // 6) judge indicators
-const indicatorTimeout = (raw && raw.indicatorTimeoutMs) ? Number(raw.indicatorTimeoutMs) : 2000;
-
-if (data.judgeGlows) {
-  // Jika payload mengirim data judgeGlows secara spesifik
-  renderJudgeIndicators(data.judgeGlows, indicatorTimeout);
-} else {
-  // Fallback ke variabel judge bawaan lainnya
-  const judgeData = data.judges || data.judgeIndicators || data.lights || data.indicators;
-
-  if (judgeData && typeof renderJudgeIndicators === 'function') {
-    renderJudgeIndicators(judgeData, indicatorTimeout);
-  } else {
-    // Fallback otomatis dari baris history terakhir
-    const chungLatest = typeof getLatestRowCells === 'function' ? getLatestRowCells(data.history?.chung) : [];
-    const hongLatest = typeof getLatestRowCells === 'function' ? getLatestRowCells(data.history?.hong) : [];
-
-    if (typeof applyJudgeArrayToHeader === 'function') {
-      applyJudgeArrayToHeader(document.querySelectorAll('#sideHistoryChung .judge-box-hdr'), chungLatest, indicatorTimeout);
-      applyJudgeArrayToHeader(document.querySelectorAll('#sideHistoryHong .judge-box-hdr'), hongLatest, indicatorTimeout);
-    }
-  }
-}
-      // 7) modals & overlays
-      const forceWoose = raw?.showWooseGirok ?? data.showWooseGirok ?? false;
-    handleWooseModal(!!forceWoose);
-    
-    const winnerData = raw?.matchWinner ?? data.matchWinner;
-    handleWinnerOverlay(winnerData);
-
-     // 8) global message / highlight
-if (data.globalMessage) setText('timer-status', data.globalMessage);
-
-// 9) SWAP LAYOUT EXTEND (TAMBAHKAN DI SINI)
-const isSwapped = raw?.isSwapped ?? data?.isSwapped ?? false;
-      const scoreboard = document.querySelector('.scoreboard');
-      if (scoreboard) {
-        scoreboard.classList.toggle('swapped', !!isSwapped);
-      }
-
-}
-    // Wire up electron/onSyncExtend or fallback to postMessage
-    if (window.electron && typeof window.electron.onSyncExtend === 'function') {
-      window.electron.onSyncExtend((d) => onSyncIncoming(d));
-      if (DBG) console.info('Extend: listening via electron.onSyncExtend');
-    } else {
-      window.addEventListener('message', (ev) => { if (!ev || !ev.data) return; onSyncIncoming(ev.data); });
-      if (DBG) console.info('Extend: fallback listener active (postMessage)');
-    }
-
-    // Request immediate sync if main supports it
-    try {
-      if (window.electron && typeof window.electron.requestSync === 'function') {
-        window.electron.requestSync();
-        if (DBG) console.info('Extend: requested initial sync via electron.requestSync()');
-      }
-    } catch (e) { /* ignore */ }
-
-function updateExtendUI(data) {
-  onSyncIncoming(data);
-}
-
-function updateMiniRoundScores(isRest) {
-  const chungElem = document.getElementById('chung-mini-scores');
-  const hongElem = document.getElementById('hong-mini-scores');
-
-  if (!chungElem || !hongElem) return;
-
-  const history = (typeof roundScoresHistory !== 'undefined') 
-    ? roundScoresHistory 
-    : (window.roundScoresHistory || { chung: {}, hong: {} });
-
-  if (isRest) {
-    let chungHTML = '';
-    let hongHTML = '';
-
-    for (let r = 1; r <= 3; r++) {
-      // Ambil nilai skor, jika null/undefined otomatis set ke 0
-      const cPoints = (history.chung && history.chung[r] !== undefined && history.chung[r] !== null) 
-        ? history.chung[r] 
-        : 0;
-
-      const hPoints = (history.hong && history.hong[r] !== undefined && history.hong[r] !== null) 
-        ? history.hong[r] 
-        : 0;
-
-      // Cetak R1, R2, dan R3 tanpa pengecekan kondisional
-      chungHTML += `
-        <div class="mini-score-item">
-          <span class="round-label">R${r}</span>
-          <span class="round-value">${cPoints}</span>
-        </div>`;
-
-      hongHTML += `
-        <div class="mini-score-item">
-          <span class="round-label">R${r}</span>
-          <span class="round-value">${hPoints}</span>
-        </div>`;
-    }
-
-    chungElem.innerHTML = chungHTML;
-    hongElem.innerHTML = hongHTML;
-
-    chungElem.style.display = 'flex';
-    hongElem.style.display = 'flex';
-  } else {
-    chungElem.innerHTML = '';
-    hongElem.innerHTML = '';
-    chungElem.style.display = 'none';
-    hongElem.style.display = 'none';
-  }
-}
-
-function getLatestRowCells(rows) {
-      if (!rows) return [null, null, null];
-      let arr = rows;
-      if (typeof arr === 'object' && !Array.isArray(arr) && arr.rows) arr = arr.rows;
-      if (!Array.isArray(arr) && typeof arr === 'object') {
-        const keys = Object.keys(arr).sort((a,b) => Number(a) - Number(b));
-        if (keys.length > 0) arr = keys.map(k => arr[k]);
-      }
-      if (!Array.isArray(arr) || arr.length === 0) return [null, null, null];
-      const lastRow = arr[arr.length - 1];
-      if (Array.isArray(lastRow)) {
-        return [lastRow[0] ?? null, lastRow[1] ?? null, lastRow[2] ?? null];
-      } else if (typeof lastRow === 'object' && lastRow !== null) {
-        const getCell = (r, i) => {
-          const keys = [`j${i}`, `J${i}`, `judge${i}`, `judge_${i}`, `${i}`, i===1?'first':i===2?'second':'third'];
-          for (const k of keys) if (r[k] !== undefined) return r[k];
-          if (r[0] !== undefined || r[1] !== undefined || r[2] !== undefined) return r[i-1];
-          return null;
-        };
-        return [getCell(lastRow, 1), getCell(lastRow, 2), getCell(lastRow, 3)];
-      }
-      return [null, lastRow, null];
-    }
-
+    console.log('✓ Extend Display Loaded - Performance Optimized');
   </script>
 </body>
 </html>
